@@ -1,26 +1,89 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Neutral palette (one color each) */
+  --ivory: #fdfbf7;
+  --cream: #f3ecdf;
+  --beige: #e2d6c5;
+  --brown: #7b5e46;
+
+  /* Semantic color mapping */
+  --bg-page: var(--ivory);
+  --bg-section: #faf8f4;
+  --bg-card: var(--cream);
+  --border-soft: var(--beige);
+  --border-strong: #d2c3af;
+
+  /* Text scale */
+  --text-primary: #111111;
+  --text-secondary: #4a4a4a;
+  --text-tertiary: #7a7a7a;
+  --text-disabled: #b3b3b3;
+
+  /* Market colors */
+  --price-up: #e53935;
+  --price-down: #1e73ff;
+
+  /* Point / button */
+  --accent-primary: var(--brown);
+  --accent-primary-hover: #6b503c;
+
+  /* Frame colors */
+  --frame-bg: #eceff3;
+  --mobile-surface: #fffdfb;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+html {
+  font-size: 16px;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  background: var(--frame-bg);
+  color: var(--text-primary);
+}
+
+.app-shell {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  padding: 0 0.75rem;
+  background: var(--frame-bg);
+}
+
+.mobile-container {
+  width: 100%;
+  max-width: 26.875rem;
+  min-height: 100vh;
+  background: var(--mobile-surface);
+  display: flex;
+  flex-direction: column;
 }
