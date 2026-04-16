@@ -21,10 +21,11 @@ export default function LoginPage() {
     setError("");
     setIsLoading(true);
     try {
-      const { accessToken, refreshToken } = await fetchApi("/api/users/login", {
+      const data: UsersRes = await fetchApi("/api/users/login", {
         method: "POST",
         body: JSON.stringify(form),
-      }) as UsersRes;
+      });
+      const { accessToken, refreshToken } = data;
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("refreshToken", refreshToken);
       router.push("/dashboard");
