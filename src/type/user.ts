@@ -10,6 +10,10 @@ export type SignupReq = {
   nickname: string;
 };
 
+export type TokenReq = {
+  refreshToken: string;
+};
+
 export type UsersRes = {
   accessToken: string;
   refreshToken: string;
