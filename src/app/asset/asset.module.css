@@ -1,0 +1,103 @@
+.page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  /* 기존 #ffffff 대신 페이지 배경색 변수 사용 */
+  background: var(--bg-page);
+}
+
+/* 상단 절반 */
+.top {
+  height: 50vh;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  /* 모바일 표면 색상 적용 */
+  background: var(--mobile-surface);
+}
+
+/* 돋보기 */
+.search {
+  display: flex;
+  justify-content: flex-end;
+  font-size: 20px;
+  cursor: pointer;
+  /* 보조 텍스트 색상 */
+  color: var(--text-secondary);
+}
+
+/* 예수금 (사용자 CSS에는 없었지만 변수 기반으로 추가) */
+.deposit {
+  margin-top: 20px;
+  font-size: 16px;
+  /* 3차 텍스트 색상 */
+  color: var(--text-tertiary);
+}
+
+/* 자산 */
+.asset {
+  margin-top: 30px;
+}
+
+.total {
+  font-size: 28px;
+  font-weight: 700;
+  /* 기본 텍스트 색상 */
+  color: var(--text-primary);
+}
+
+/* 증감 */
+.change {
+  margin-top: 10px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+/* 상승 (빨강 변수) */
+.up {
+  color: var(--price-up);
+}
+
+/* 하락 (파랑 변수) */
+.down {
+  color: var(--price-down);
+}
+
+/* 하단 절반 */
+.bottom {
+  height: 50vh;
+  /* 기존 #f5f5f5 대신 섹션 배경색 변수 사용 */
+  background: var(--bg-section);
+  /* 선택사항: 상단과 구분감을 주려면 연한 선 추가 */
+  border-top: 1px solid var(--border-soft);
+}
+
+.asset {
+  margin-top: 30px;
+  /* 헥사코드(#8060d4) 대신 rgba를 사용합니다. */
+  /* 마지막 0.1이 투명도입니다 (0: 투명 ~ 1: 불투명) */
+  background-color: rgba(128, 96, 212, 0.2); 
+  
+  border-radius: 20px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  
+  /* 배경이 연해졌으므로 테두리를 살짝 주면 더 깔끔합니다 */
+  border: 1px solid var(--border-soft);
+}
+
+.total {
+  font-size: 28px;
+  font-weight: 700;
+  color: #000000;
+}
+
+.change {
+  /* 박스 안에서 수익률이 둥 떠 보이지 않게 정렬 */
+  font-size: 18px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+}
