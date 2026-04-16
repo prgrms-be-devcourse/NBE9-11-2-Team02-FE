@@ -23,12 +23,6 @@ export default function RegisterPage() {
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-
-    if (form.password !== form.passwordConfirm) {
-      setError("비밀번호가 일치하지 않습니다.");
-      return;
-    }
-
     setIsLoading(true);
     try {
       await fetchApi("/api/users/signup", {
