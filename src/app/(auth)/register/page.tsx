@@ -142,5 +142,4 @@ const buttonStyle: React.CSSProperties = {
   fontWeight: 700,
   fontSize: "1rem",
   cursor: "pointer",
-  opacity: 1,
 };
