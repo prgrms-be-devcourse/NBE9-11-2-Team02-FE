@@ -8,10 +8,13 @@ import { LoginReq, UsersRes } from "@/type/user";
 
 export default function LoginPage() {
   const router = useRouter();
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [form, setForm] = useState<LoginReq>({ username: "", password: "" });
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,7 +23,7 @@ export default function LoginPage() {
     try {
       const { accessToken, refreshToken } = await fetchApi("/api/users/login", {
         method: "POST",
-        body: JSON.stringify({ username, password } as LoginReq),
+        body: JSON.stringify(form),
       }) as UsersRes;
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("refreshToken", refreshToken);
@@ -52,17 +55,19 @@ export default function LoginPage() {
       >
         <input
           type="text"
+          name="username"
           placeholder="아이디"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
+          value={form.username}
+          onChange={onChange}
           required
           style={inputStyle}
         />
         <input
           type="password"
+          name="password"
           placeholder="비밀번호"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          value={form.password}
+          onChange={onChange}
           required
           style={inputStyle}
         />
