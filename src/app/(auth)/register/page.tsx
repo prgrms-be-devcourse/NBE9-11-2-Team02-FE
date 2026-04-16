@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import Link from "next/link";
 import { fetchApi } from "@/lib/client";
 import { SignupReq } from "@/type/user";
 
@@ -113,9 +114,9 @@ export default function RegisterPage() {
         }}
       >
         이미 계정이 있으신가요?{" "}
-        <a href="/login" style={{ color: "var(--accent-primary)", fontWeight: 600 }}>
+        <Link href="/login" style={{ color: "var(--accent-primary)", fontWeight: 600 }}>
           로그인
-        </a>
+        </Link>
       </p>
     </>
   );
