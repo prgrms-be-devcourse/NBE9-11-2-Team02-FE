@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Link from "next/link";
 import { fetchApi } from "@/lib/client";
-import { UsersRes } from "@/type/user";
+import { LoginReq, UsersRes } from "@/type/user";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -20,7 +20,7 @@ export default function LoginPage() {
     try {
       const { accessToken, refreshToken } = await fetchApi("/api/users/login", {
         method: "POST",
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ username, password } as LoginReq),
       }) as UsersRes;
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("refreshToken", refreshToken);
