@@ -7,11 +7,6 @@ export function fetchApi(url: string, options?: RequestInit) {
     headers.set("Content-Type", "application/json");
   }
 
-  const accessToken = localStorage.getItem("accessToken");
-  if (accessToken) {
-    headers.set("Authorization", `Bearer ${accessToken}`);
-  }
-
   options.headers = headers;
 
   return fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}${url}`, options).then(
