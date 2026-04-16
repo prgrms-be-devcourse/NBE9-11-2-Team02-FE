@@ -1,89 +1,111 @@
 @import "tailwindcss";
 
 :root {
-  /* Neutral palette (one color each) */
-  --ivory: #fdfbf7;
-  --cream: #f3ecdf;
-  --beige: #e2d6c5;
-  --brown: #7b5e46;
+    /* ─── 키 컬러 ───────────────────────────────────────────
+     * --accent-primary       : 포인트 버튼·강조 요소 기본색   */
+    --accent-primary: #8060d4;
 
-  /* Semantic color mapping */
-  --bg-page: var(--ivory);
-  --bg-section: #faf8f4;
-  --bg-card: var(--cream);
-  --border-soft: var(--beige);
-  --border-strong: #d2c3af;
+    /* ─── 배경 ─────────────────────────────────────────────
+     * --bg-page    : 각 화면(라우트)의 루트 배경
+     *               → <section class="page"> 처럼 화면 전체를 감싸는 최상위에 사용  */
+    --bg-page: #fdfbff;
 
-  /* Text scale */
-  --text-primary: #111111;
-  --text-secondary: #4a4a4a;
-  --text-tertiary: #7a7a7a;
-  --text-disabled: #b3b3b3;
+    /* * --bg-section : 페이지 안에서 탭·필터·구역을 나눌 때 사용
+     *                 → --bg-page보다 살짝 어두워 영역 구분 역할                    */
+    --bg-section: #f9f7fc;
 
-  /* Market colors */
-  --price-up: #e53935;
-  --price-down: #1e73ff;
+    /* * --bg-card    : 카드·박스 컴포넌트 배경, 키패드 키 눌림(active) 피드백
+     *                 → --bg-section 위에 올라오는 카드에 사용                      */
+    --bg-card: #f0f0f0;
 
-  /* Point / button */
-  --accent-primary: var(--brown);
-  --accent-primary-hover: #6b503c;
+    /* ─── 선(Border) ────────────────────────────────────────
+     * --border-soft : 키패드 칸 구분선                        */
+    --border-soft: #e4dff0;
 
-  /* Frame colors */
-  --frame-bg: #eceff3;
-  --mobile-surface: #fffdfb;
+    /* ─── 텍스트 ────────────────────────────────────────────
+     * --text-primary   : 본문·숫자 등 기본 텍스트             */
+    --text-primary: #111111;
+
+    /* * --text-secondary : 종목명 등 보조 텍스트              */
+    --text-secondary: #4a4a4a;
+
+    /* * --text-tertiary  : 구매가능 금액 등 3차 텍스트        */
+    --text-tertiary: #7a7a7a;
+
+    /* * --text-disabled  : 수량 미입력 placeholder            */
+    --text-disabled: #b3b3b3;
+
+    /* ─── 시세 색상 ─────────────────────────────────────────
+     * --price-up   : 상승 (빨강) — 현재가·구매하기 버튼 배경  */
+    --price-up: #d94f4c;
+
+    /* * --price-down : 하락 (파랑) — 수량 입력 커서 색        */
+    --price-down: #4468c4;
+
+    /* ─── 프레임 ────────────────────────────────────────────
+     * --frame-bg       : 모바일 컨테이너 바깥 데스크탑 여백 색 */
+    --frame-bg: #0b0b0b;
+
+    /* * --mobile-surface : 모바일 컨테이너(앱 껍데기) 자체 배경
+     *                      페이지 콘텐츠가 짧을 때 빈 하단에 보이는 색              */
+    --mobile-surface: #fefcff;
 }
 
 * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 a {
-  text-decoration: none;
-  color: inherit;
+    text-decoration: none;
+    color: inherit;
 }
 
 ul,
 ol {
-  list-style: none;
+    list-style: none;
 }
 
 button {
-  background: none;
-  border: none;
-  cursor: pointer;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+button:active {
+    opacity: 0.8;
 }
 
 html,
 body {
-  min-height: 100%;
+    min-height: 100%;
 }
 
 html {
-  font-size: 16px;
+    font-size: 16px;
 }
 
 body {
-  font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     "Helvetica Neue", Arial, sans-serif;
-  background: var(--frame-bg);
-  color: var(--text-primary);
+    background: var(--frame-bg);
+    color: var(--text-primary);
 }
 
 .app-shell {
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  padding: 0 0.75rem;
-  background: var(--frame-bg);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 0 0.75rem;
+    background: var(--frame-bg);
 }
 
 .mobile-container {
-  width: 100%;
-  max-width: 26.875rem;
-  min-height: 100vh;
-  background: var(--mobile-surface);
-  display: flex;
-  flex-direction: column;
+    width: 100%;
+    max-width: 24.375rem;
+    min-height: 100vh;
+    background: var(--mobile-surface);
+    display: flex;
+    flex-direction: column;
 }
