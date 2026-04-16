@@ -8,19 +8,21 @@ export default function DashboardPage() {
   const router = useRouter();
 
   const onLogout = async () => {
-    const req: TokenReq = { refreshToken: localStorage.getItem("refreshToken") ?? "" };
-    try {
-      await fetchApi("/api/users/logout", {
-        method: "POST",
-        body: JSON.stringify(req),
-      });
-    } catch {
-      // 토큰이 만료되었거나 유효하지 않아도 로컬 토큰은 제거
-    } finally {
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("refreshToken");
-      router.push("/login");
+    const refreshToken = localStorage.getItem("refreshToken");
+    if (refreshToken) {
+      const req: TokenReq = { refreshToken };
+      try {
+        await fetchApi("/api/users/logout", {
+          method: "POST",
+          body: JSON.stringify(req),
+        });
+      } catch {
+        // 토큰이 만료되었거나 유효하지 않아도 로컬 토큰은 제거
+      }
     }
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    router.push("/login");
   };
 
   return (
