@@ -2,16 +2,17 @@
 
 import { useRouter } from "next/navigation";
 import { fetchApi } from "@/lib/client";
+import { TokenReq } from "@/type/user";
 
 export default function DashboardPage() {
   const router = useRouter();
 
   const onLogout = async () => {
-    const refreshToken = localStorage.getItem("refreshToken");
+    const req: TokenReq = { refreshToken: localStorage.getItem("refreshToken") ?? "" };
     try {
       await fetchApi("/api/users/logout", {
         method: "POST",
-        body: JSON.stringify({ refreshToken }),
+        body: JSON.stringify(req),
       });
     } catch {
       // 토큰이 만료되었거나 유효하지 않아도 로컬 토큰은 제거
