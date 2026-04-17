@@ -16,13 +16,12 @@ const getLogo = (name: string) => {
   if (name.includes("셀트리온")) return "/logos/celltrion.svg";
   if (name.includes("한국전력")) return "/logos/kepco.svg";
   if (name.includes("하나")) return "/logos/hana.svg";
-
   return "/logos/default.svg";
 };
 
 const getLogoSize = (name: string) => {
-  if (name.includes("삼성")) return 300;
-  if (name.includes("NAVER")) return 300;
+  if (name.includes("삼성")) return 58;
+  if (name.includes("NAVER")) return 58;
   return 48;
 };
 
@@ -88,7 +87,7 @@ export default function StocksPage() {
     <div
       style={{
         minHeight: "100vh",
-        backgroundColor: "#dcdcdc",
+        backgroundColor: "var(--bg-page)", // 아이보리 배경
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
@@ -99,7 +98,7 @@ export default function StocksPage() {
         style={{
           width: "560px",
           height: "900px",
-          backgroundColor: "#e9e9e9",
+          backgroundColor: "#ffffff",
           borderRadius: "36px",
           padding: "26px 22px 28px",
           boxSizing: "border-box",
@@ -113,7 +112,7 @@ export default function StocksPage() {
           style={{
             fontSize: "54px",
             fontWeight: 700,
-            color: "#111",
+            color: "#111111",
             margin: "24px 0 20px",
             lineHeight: 1.15,
           }}
@@ -124,15 +123,15 @@ export default function StocksPage() {
         <div
           style={{
             height: "2px",
-            backgroundColor: "#c9c9c9",
+            backgroundColor: "#d9d9d9",
             marginBottom: "14px",
           }}
         />
 
         <div
           style={{
-            backgroundColor: "#101018",
-            border: "3px solid #1a1a1a",
+            backgroundColor: "#0b0b0b", // 검은 리스트
+            border: "1px solid #1f1f1f",
             borderRadius: "20px",
             flex: 1,
             overflowY: "auto",
@@ -153,11 +152,12 @@ export default function StocksPage() {
                   alignItems: "center",
                   padding: "16px 18px",
                   transition: "background-color 0.3s ease",
+                  borderBottom: "1px solid #1f1f1f",
                   backgroundColor:
                     highlight === "up"
-                      ? "rgba(255, 80, 80, 0.12)"
+                      ? "rgba(217, 79, 76, 0.15)"
                       : highlight === "down"
-                      ? "rgba(70, 130, 255, 0.12)"
+                      ? "rgba(68, 104, 196, 0.15)"
                       : "transparent",
                 }}
               >
@@ -166,25 +166,25 @@ export default function StocksPage() {
                     width: "62px",
                     height: "62px",
                     borderRadius: "50%",
-                    backgroundColor: "#f8f8f8",
+                    backgroundColor: "#f5f5f5",
                     overflow: "hidden",
                     display: "flex",
                     justifyContent: "center",
-                    alignItems: "center"
+                    alignItems: "center",
                   }}
                 >
-                  <Image 
-                  src={getLogo(stock.stockName)}
-                  alt={stock.stockName}
-                  width={getLogoSize(stock.stockName)}
-                  height={getLogoSize(stock.stockName)}
-                  style={{ objectFit: "contain" }}
+                  <Image
+                    src={getLogo(stock.stockName)}
+                    alt={stock.stockName}
+                    width={getLogoSize(stock.stockName)}
+                    height={getLogoSize(stock.stockName)}
+                    style={{ objectFit: "contain" }}
                   />
                 </div>
 
                 <div
                   style={{
-                    color: "#d9d9d9",
+                    color: "#ffffff",
                     fontSize: "26px",
                     fontWeight: 500,
                     whiteSpace: "nowrap",
@@ -201,7 +201,7 @@ export default function StocksPage() {
                     style={{
                       fontSize: "26px",
                       fontWeight: 700,
-                      color: isUp ? "#ff4d6d" : isDown ? "#3b82f6" : "#ffffff",
+                      color: isUp ? "#d94f4c" : isDown ? "#4468c4" : "#ffffff",
                       transition: "transform 0.25s ease",
                       transform: highlight ? "scale(1.08)" : "scale(1)",
                     }}
@@ -216,7 +216,7 @@ export default function StocksPage() {
                       marginTop: "6px",
                       fontSize: "24px",
                       fontWeight: 500,
-                      color: isUp ? "#ff4d6d" : isDown ? "#3b82f6" : "#d9d9d9",
+                      color: isUp ? "#d94f4c" : isDown ? "#4468c4" : "#dddddd",
                       transition: "transform 0.25s ease",
                       transform: highlight ? "scale(1.05)" : "scale(1)",
                     }}
@@ -241,13 +241,14 @@ export default function StocksPage() {
         >
           <button
             style={{
-              height: "92px",
+              height: "90px",
               borderRadius: "28px",
-              border: "4px solid #9b8cf2",
-              backgroundColor: "#d8d2f3",
-              fontSize: "32px",
-              fontWeight: 500,
-              color: "#111",
+              border: "2px solid #8060d4",
+              backgroundColor: "#d8c9f3",
+              color: "#111111",
+              fontSize: "28px",
+              fontWeight: 600,
+              boxShadow: "0 4px 10px rgba(128, 96, 212, 0.18)",
               cursor: "pointer",
             }}
           >
@@ -256,13 +257,14 @@ export default function StocksPage() {
 
           <button
             style={{
-              height: "92px",
+              height: "90px",
               borderRadius: "28px",
-              border: "4px solid #9b8cf2",
-              backgroundColor: "#d8d2f3",
-              fontSize: "32px",
-              fontWeight: 500,
-              color: "#111",
+              border: "2px solid #8060d4",
+              backgroundColor: "#d8c9f3",
+              color: "#111111",
+              fontSize: "28px",
+              fontWeight: 600,
+              boxShadow: "0 4px 10px rgba(128, 96, 212, 0.18)",
               cursor: "pointer",
             }}
           >
