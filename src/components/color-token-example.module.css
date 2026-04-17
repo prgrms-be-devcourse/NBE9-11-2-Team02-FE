@@ -1,0 +1,34 @@
+.accentBtn {
+  background-color: var(--accent-primary);
+  color: #ffffff;
+  border-radius: 0.625rem;
+  padding: 0.75rem 0.875rem;
+  font-weight: 600;
+}
+
+/* 매수 / 매도 버튼 */
+.tradeRow {
+  display: flex;
+  gap: 0.625rem;
+  margin-top: 0.75rem;
+}
+
+.buyBtn {
+  flex: 1;
+  padding: 0.75rem;
+  border-radius: 0.625rem;
+  background-color: var(--price-up);
+  color: #ffffff;
+  font-size: 0.9375rem;
+  font-weight: 700;
+}
+
+.sellBtn {
+  flex: 1;
+  padding: 0.75rem;
+  border-radius: 0.625rem;
+  background-color: var(--price-down);
+  color: #ffffff;
+  font-size: 0.9375rem;
+  font-weight: 700;
+}
