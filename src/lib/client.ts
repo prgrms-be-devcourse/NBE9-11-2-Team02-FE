@@ -8,6 +8,7 @@ export function fetchApi(url: string, options?: RequestInit) {
   }
 
   options.headers = headers;
+  options.credentials = "include";
 
   return fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}${url}`, options).then(
     async (res) => {

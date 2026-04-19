@@ -25,9 +25,7 @@ export default function LoginPage() {
         method: "POST",
         body: JSON.stringify(form),
       });
-      const { accessToken, refreshToken } = data;
-      localStorage.setItem("accessToken", accessToken);
-      localStorage.setItem("refreshToken", refreshToken);
+      localStorage.setItem("accessToken", data.accessToken);
       router.push("/dashboard");
     } catch (err) {
       setError(err instanceof Error ? err.message : "로그인에 실패했습니다.");
