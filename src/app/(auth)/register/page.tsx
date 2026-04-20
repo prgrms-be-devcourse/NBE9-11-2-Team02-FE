@@ -5,6 +5,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { fetchApi } from "@/lib/client";
 import { SignupReq } from "@/type/user";
+import RegisterSuccessModal from "@/components/RegisterSuccessModal";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -15,6 +16,7 @@ export default function RegisterPage() {
     nickname: "",
   });
   const [error, setError] = useState("");
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -30,8 +32,7 @@ export default function RegisterPage() {
         method: "POST",
         body: JSON.stringify(form),
       });
-      alert("회원가입이 완료되었습니다.");
-      router.push("/login");
+      setShowSuccessModal(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : "회원가입에 실패했습니다.");
     } finally {
@@ -41,6 +42,9 @@ export default function RegisterPage() {
 
   return (
     <>
+      {showSuccessModal && (
+        <RegisterSuccessModal onConfirm={() => router.push("/login")} />
+      )}
       <h1
         style={{
           fontSize: "1.5rem",

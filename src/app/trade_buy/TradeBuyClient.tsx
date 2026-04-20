@@ -49,11 +49,13 @@ export default function TradeBuyClient() {
 
     setIsBuying(true);
     try {
-      const res = await fetch("/api/trades/buy?userId=1", {
+      const accessToken = localStorage.getItem("accessToken");
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/trades/buy`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "X-Idempotency-Key": crypto.randomUUID(),
+          Authorization: `Bearer ${accessToken}`,
         },
         body: JSON.stringify({ stockId, quantity: Number(qtyDigits) }),
       });
@@ -78,7 +80,7 @@ export default function TradeBuyClient() {
   }, [isButtonDisabled, stockId, qtyDigits, showToast]);
 
   useEffect(() => {
-    const es = new EventSource(`http://localhost:8080/api/stocks/${stockCode}/sse`);
+    const es = new EventSource(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/stocks/${stockCode}/sse`);
 
     es.onmessage = (e) => {
       const data = JSON.parse(e.data);

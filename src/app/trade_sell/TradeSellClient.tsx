@@ -71,7 +71,7 @@ export default function TradeSellClient() {
 
     setIsBuying(true);
     try {
-      const res = await fetch("/api/trades/sell?userId=2", {
+      const res = await fetch("/api/trades/sell?userId=1", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
