@@ -19,17 +19,20 @@ function formatQtyDigits(raw: string): string {
 export default function TradeSellClient() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const SLIPPAGE_RATE = 0.98;
 // URL 쿼리 파라미터에서 주식 정보를 가져오며, 없을 경우 기본값을 설정합니다.
   const stockCode = searchParams.get("stockCode") ?? "005930";
   const stockId = Number(searchParams.get("stockId") ?? "1");
   const stockName = searchParams.get("stockName") ?? "삼성전자";
 // 상태 관리: 서버 데이터(실시간 가격) 및 UI 인터랙션(입력, 토스트, 로딩)
-  const [currentPrice, setCurrentPrice] = useState<number | null>(null);
+  //const [currentPrice, setCurrentPrice] = useState<number | null>(null);
   const [changeSign, setChangeSign] = useState("");
   const [changeRate, setChangeRate] = useState("");
-  const [qtyDigits, setQtyDigits] = useState("");
+  //const [qtyDigits, setQtyDigits] = useState("");
   const [isBuying, setIsBuying] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
+  const [currentPrice, setCurrentPrice] = useState<number | null>(50000); // 5만원으로 고정
+const [qtyDigits, setQtyDigits] = useState("10"); // 10주 입력으로 고정
 
   // [추가] 나의 보유 주식 수량을 저장할 상태
   const [myMaxQty, setMyMaxQty] = useState(0);
@@ -59,6 +62,10 @@ export default function TradeSellClient() {
 
   // [추가] 보유 수량 초과 여부 계산
   const isExceeded = Number(qtyDigits) > myMaxQty;
+
+  // [추가] 수수료 계산 로직
+  const estimatedPrice = (currentPrice ?? 0) * SLIPPAGE_RATE;
+  const totalAmount = Number(qtyDigits) * estimatedPrice;
 
   const isButtonDisabled = currentPrice === null || qtyDigits === "" || isBuying||isExceeded|| !isMarketOpen;
 
@@ -246,7 +253,16 @@ export default function TradeSellClient() {
             : `보유: ${myMaxQty.toLocaleString()}주 · ${qtyDigits && currentPrice !== null ? `총 ${formatKrw(Number(qtyDigits) * currentPrice)}` : "판매가능"}`
           }
         </p>
+        {/* [수정] "최소" 문구 적용 */}
+        {qtyDigits && currentPrice !== null && (
+          <div style={{ marginTop: '8px', fontSize: '0.85rem', color: '#666', padding: '8px', borderRadius: '4px', background: '#f9f9f9' }}>
+            <p>최소 {formatKrw(totalAmount)}</p>
+          </div>
+        )}
         </section>
+        <p style={{ fontWeight: 'bold', color: '#d32f2f' }}>
+              ⚠️ 시장 상황에 따라 최대 2% 차이가 발생할 수 있습니다.
+            </p>
         <div className={styles.keypadWrap}>
           <div className={styles.keypad} role="group" aria-label="숫자 키패드">
             {keys.map((row, ri) =>
