@@ -26,6 +26,7 @@ export default function TradeBuyClient() {
   const [changeRate, setChangeRate] = useState("");
   const [qtyDigits, setQtyDigits] = useState("");
   const [isBuying, setIsBuying] = useState(false);
+  const [showPriceInfo, setShowPriceInfo] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -55,7 +56,7 @@ export default function TradeBuyClient() {
           "Content-Type": "application/json",
           "X-Idempotency-Key": crypto.randomUUID(),
         },
-        body: JSON.stringify({ stockId, quantity: Number(qtyDigits) }),
+        body: JSON.stringify({ stockId, quantity: Number(qtyDigits), expectedPrice: currentPrice }),
       });
 
       if (!res.ok) {
@@ -155,7 +156,24 @@ export default function TradeBuyClient() {
 
       <div className={styles.body}>
         <section className={styles.card} aria-label="구매 가격">
-          <p className={styles.priceLabel}>구매할 가격(시장가)</p>
+          <div className={styles.priceLabelRow}>
+            <p className={styles.priceLabel}>구매할 가격(시장가)</p>
+            <button
+              type="button"
+              className={styles.infoBtn}
+              onClick={() => setShowPriceInfo((v) => !v)}
+              aria-label="가격 안내"
+            >
+              ?
+            </button>
+          </div>
+          {showPriceInfo && (
+            <p className={styles.priceNotice}>
+              구매버튼 누른 순간보다 가격이 2% 넘게 올라가면 주문이 아예 안 들어가요.
+              대신 더 싸게 살 수 있으면 그대로 진행돼요.
+              (시장가 주문이라 실제 가격이 달라질 수 있어, 너무 비싸게 구매되는 걸 막기 위함입니다.)
+            </p>
+          )}
           <p className={styles.priceValue}>
             {currentPrice !== null ? formatKrw(currentPrice) : "-"}
           </p>
