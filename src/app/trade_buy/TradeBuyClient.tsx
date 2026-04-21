@@ -3,6 +3,7 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import styles from "./trade-buy.module.css";
+import { useAuth } from "@/hooks/useAuth";
 
 function formatKrw(n: number): string {
   return `${n.toLocaleString("ko-KR")}원`;
@@ -14,6 +15,7 @@ function formatQtyDigits(raw: string): string {
 }
 
 export default function TradeBuyClient() {
+  useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
 

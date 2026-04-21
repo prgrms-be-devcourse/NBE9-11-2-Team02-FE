@@ -21,11 +21,11 @@ export default function LoginPage() {
     setError("");
     setIsLoading(true);
     try {
-      const data: UsersRes = await fetchApi("/api/users/login", {
+      const res = await fetchApi("/api/users/login", {
         method: "POST",
         body: JSON.stringify(form),
       });
-      localStorage.setItem("accessToken", data.accessToken);
+      localStorage.setItem("accessToken", res.data.accessToken);
       router.push("/dashboard");
     } catch (err) {
       setError(err instanceof Error ? err.message : "로그인에 실패했습니다.");

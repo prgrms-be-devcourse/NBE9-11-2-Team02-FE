@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./ranking.module.css";
+import { useAuth } from "@/hooks/useAuth";
 
 type RankingItem = {
   userId: number;
@@ -57,6 +58,7 @@ function getBadgeClass(rank: number) {
 }
 
 export default function RankingPage() {
+  useAuth();
   const router = useRouter();
   const [rankings, setRankings] = useState<RankingItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -66,11 +68,6 @@ export default function RankingPage() {
   useEffect(() => {
     const fetchRankings = async () => {
       const accessToken = localStorage.getItem("accessToken");
-
-      if (!accessToken) {
-        router.push("/login");
-        return;
-      }
 
       try {
         setIsLoading(true);
