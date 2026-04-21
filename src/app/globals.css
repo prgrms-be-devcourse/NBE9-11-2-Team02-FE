@@ -97,15 +97,19 @@ body {
     min-height: 100vh;
     display: flex;
     justify-content: center;
-    padding: 0 0.75rem;
+    align-items: center;
+    padding: 0.75rem;
     background: var(--frame-bg);
 }
 
 .mobile-container {
     width: 100%;
     max-width: 24.375rem;
-    min-height: 100vh;
+    height: 52.75rem;
+    max-height: 100vh;
     background: var(--mobile-surface);
     display: flex;
     flex-direction: column;
+    overflow-y: auto;
+    border-radius: 2rem;
 }
