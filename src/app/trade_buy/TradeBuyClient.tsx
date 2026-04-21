@@ -169,9 +169,9 @@ export default function TradeBuyClient() {
           </div>
           {showPriceInfo && (
             <p className={styles.priceNotice}>
-              구매버튼 누른 순간보다 가격이 2% 넘게 올라가면 주문이 아예 안 들어가요.
-              대신 더 싸게 살 수 있으면 그대로 진행돼요.
-              (시장가 주문이라 실제 가격이 달라질 수 있어, 너무 비싸게 구매되는 걸 막기 위함입니다.)
+              구매 버튼을 누른 순간보다 가격이 2% 넘게 올랐거나,<br />
+              실시간 시세가 10초 넘게 지연된 경우 구매되지 않아요.<br />
+              더 싸게 구매할 수 있으면 그대로 진행돼요.
             </p>
           )}
           <p className={styles.priceValue}>
