@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import styles from "./asset.module.css";
 import { fetchApi } from "@/lib/client";
 import { useSearchParams } from "next/navigation";
+import { useAuth } from "@/hooks/useAuth";
 
 /** 보유 주식 */
 type StockInfo = {
@@ -19,6 +20,7 @@ type AssetRes = {
 };
 
 export default function MainPage() {
+  useAuth();
   const searchParams = useSearchParams();
   const userId = searchParams.get("userId");
 

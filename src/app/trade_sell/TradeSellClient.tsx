@@ -2,6 +2,7 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useAuth } from "@/hooks/useAuth";
 import styles from "./trade-sell.module.css";
 /** * 숫자를 한국 원화 형식(₩)으로 포맷팅합니다. 
  * 예: 10000 -> "10,000원"
@@ -17,6 +18,7 @@ function formatQtyDigits(raw: string): string {
 }
 
 export default function TradeSellClient() {
+  useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
 // URL 쿼리 파라미터에서 주식 정보를 가져오며, 없을 경우 기본값을 설정합니다.
