@@ -79,7 +79,7 @@ export default function TradeSellClient() {
           "Content-Type": "application/json",
           "X-Idempotency-Key": crypto.randomUUID(),
         },
-        body: JSON.stringify({ stockId, quantity: Number(qtyDigits) }),
+        body: JSON.stringify({ stockId, quantity: Number(qtyDigits), expectedPrice: currentPrice}),
       });
 
       if (!res.ok) {
@@ -126,8 +126,6 @@ export default function TradeSellClient() {
   useEffect(() => {
     const checkMarketStatus = () => {
       const now = new Date();
-      now.setHours(16, 0, 0);
-      
       const day = now.getDay(); // 0:일, 1:월, ..., 6:토
       const hour = now.getHours();
       const minute = now.getMinutes();
