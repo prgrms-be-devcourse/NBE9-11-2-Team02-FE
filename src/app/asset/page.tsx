@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import styles from "./asset.module.css";
 import { fetchApi } from "@/lib/client";
-import { useSearchParams } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 
 /** 보유 주식 */
@@ -21,26 +20,23 @@ type AssetRes = {
 
 export default function MainPage() {
   useAuth();
-  const searchParams = useSearchParams();
-  const userId = searchParams.get("userId");
-
   const [totalAmount, setTotalAmount] = useState(0);
   const [stocks, setStocks] = useState<StockInfo[]>([]);
   const [prices, setPrices] = useState<Record<string, number>>({});
 
   /** 1️⃣ 자산 + 보유 주식 조회 */
-useEffect(() => {
-  if (!userId) return;
-
-  fetchApi(`/api/asset/accounts/${userId}`)
-    .then((res) => {
-      const data: AssetRes = res.data;
-
-      setTotalAmount(data.totalAmount);
-      setStocks(data.stocks || []); 
+  useEffect(() => {
+    const accessToken = localStorage.getItem("accessToken");
+    fetchApi(`/api/asset/accounts`, {
+      headers: { Authorization: `Bearer ${accessToken}` },
     })
-    .catch(console.error);
-}, [userId]);
+      .then((res) => {
+        const data: AssetRes = res.data;
+        setTotalAmount(data.totalAmount);
+        setStocks(data.stocks || []);
+      })
+      .catch(console.error);
+  }, []);
 
   /** 2️⃣ 가격 폴링 (수정된 버전) */
   useEffect(() => {

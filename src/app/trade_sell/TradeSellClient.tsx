@@ -38,13 +38,13 @@ export default function TradeSellClient() {
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  /** [추가] 페이지 로드 시 나의 보유 주식 수량 조회 */
   useEffect(() => {
-    // 실제 userId는 로그인 세션 등에서 가져오는 것이 좋습니다.
-    fetch(`/api/asset/accounts/1`) 
+    const accessToken = localStorage.getItem("accessToken");
+    fetch(`/api/asset/accounts`, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    })
       .then((res) => res.json())
       .then((res) => {
-        // 서버 응답에서 해당 주식 코드를 찾아 보유 수량 저장
         const targetStock = res.data.stocks.find((s: any) => s.stockCode === stockCode);
         setMyMaxQty(targetStock ? targetStock.quantity : 0);
       })
@@ -73,11 +73,13 @@ export default function TradeSellClient() {
 
     setIsBuying(true);
     try {
-      const res = await fetch("/api/trades/sell?userId=1", {
+      const accessToken = localStorage.getItem("accessToken");
+      const res = await fetch("/api/trades/sell", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "X-Idempotency-Key": crypto.randomUUID(),
+          Authorization: `Bearer ${accessToken}`,
         },
         body: JSON.stringify({ stockId, quantity: Number(qtyDigits) }),
       });
