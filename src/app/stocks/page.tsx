@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
+import styles from "./stocks.module.css";
 
 const getLogo = (name: string) => {
   if (name.includes("삼성")) return "/logos/samsung.svg";
@@ -20,16 +22,15 @@ const getLogo = (name: string) => {
 };
 
 const getLogoSize = (name: string) => {
-  if (name.includes("삼성")) return 58;
-  if (name.includes("NAVER")) return 58;
-  return 48;
+  if (name.includes("삼성")) return 48;
+  if (name.includes("NAVER")) return 48;
+  return 42;
 };
 
 type Stock = {
   id: number;
   stockCode: string;
   stockName: string;
-  market: string;
   currentPrice: number | null;
   changeRate: number | null;
 };
@@ -39,25 +40,23 @@ type HighlightMap = Record<number, "up" | "down" | null>;
 export default function StocksPage() {
   const [stocks, setStocks] = useState<Stock[]>([]);
   const [highlightMap, setHighlightMap] = useState<HighlightMap>({});
+  const [error, setError] = useState("");
   const prevPriceMapRef = useRef<Record<number, number | null>>({});
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    const fetchStocks = async () => {
-      try {
-        const res = await fetch("http://localhost:8080/api/stocks");
-        const data: Stock[] = await res.json();
+    const eventSource = new EventSource("http://localhost:8080/api/stocks/sse");
 
+    eventSource.onmessage = (event) => {
+      try {
+        const data: Stock[] = JSON.parse(event.data);
         const nextHighlightMap: HighlightMap = {};
 
         data.forEach((stock) => {
           const prevPrice = prevPriceMapRef.current[stock.id];
           const nextPrice = stock.currentPrice;
 
-          if (
-            prevPrice != null &&
-            nextPrice != null &&
-            prevPrice !== nextPrice
-          ) {
+          if (prevPrice != null && nextPrice != null && prevPrice !== nextPrice) {
             nextHighlightMap[stock.id] = nextPrice > prevPrice ? "up" : "down";
           } else {
             nextHighlightMap[stock.id] = null;
@@ -68,209 +67,111 @@ export default function StocksPage() {
 
         setStocks(data);
         setHighlightMap(nextHighlightMap);
+        setError("");
 
-        setTimeout(() => {
-          setHighlightMap({});
-        }, 500);
-      } catch (err) {
-        console.error("주식 데이터 조회 실패", err);
+        if (timeoutRef.current) clearTimeout(timeoutRef.current);
+        timeoutRef.current = setTimeout(() => setHighlightMap({}), 500);
+      } catch (e) {
+        console.error("SSE 데이터 파싱 실패", e);
+        setError("실시간 종목 데이터를 처리하지 못했습니다.");
       }
     };
 
-    fetchStocks();
-    const interval = setInterval(fetchStocks, 3000);
+    eventSource.onerror = () => {
+      setError("실시간 종목 데이터를 불러오지 못했습니다.");
+      eventSource.close();
+    };
 
-    return () => clearInterval(interval);
+    return () => {
+      eventSource.close();
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
   }, []);
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        backgroundColor: "var(--bg-page)", // 아이보리 배경
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        padding: "24px",
-      }}
-    >
-      <div
-        style={{
-          width: "560px",
-          height: "900px",
-          backgroundColor: "#ffffff",
-          borderRadius: "36px",
-          padding: "26px 22px 28px",
-          boxSizing: "border-box",
-          display: "flex",
-          flexDirection: "column",
-          boxShadow: "0 10px 30px rgba(0,0,0,0.12)",
-          overflow: "hidden",
-        }}
-      >
-        <h1
-          style={{
-            fontSize: "54px",
-            fontWeight: 700,
-            color: "#111111",
-            margin: "24px 0 20px",
-            lineHeight: 1.15,
-          }}
-        >
-          코스피 상장 종목
-        </h1>
+    <div className={styles.page}>
+      <div className={styles.phone}>
+        <div className={styles.header}>
+          <h1 className={styles.title}>코스피 상장 종목</h1>
+        </div>
 
-        <div
-          style={{
-            height: "2px",
-            backgroundColor: "#d9d9d9",
-            marginBottom: "14px",
-          }}
-        />
+        <div className={styles.list}>
+          {error ? (
+            <div className={styles.messageError}>{error}</div>
+          ) : stocks.length === 0 ? (
+            <div className={styles.messageLoading}>종목 데이터를 불러오는 중입니다.</div>
+          ) : (
+            stocks.map((stock) => {
+              const isUp = (stock.changeRate ?? 0) > 0;
+              const isDown = (stock.changeRate ?? 0) < 0;
+              const highlight = highlightMap[stock.id];
 
-        <div
-          style={{
-            backgroundColor: "#0b0b0b", // 검은 리스트
-            border: "1px solid #1f1f1f",
-            borderRadius: "20px",
-            flex: 1,
-            overflowY: "auto",
-            padding: "10px 0",
-          }}
-        >
-          {stocks.map((stock) => {
-            const isUp = (stock.changeRate ?? 0) > 0;
-            const isDown = (stock.changeRate ?? 0) < 0;
-            const highlight = highlightMap[stock.id];
-
-            return (
-              <div
-                key={stock.id}
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "88px minmax(0, 1fr) 170px",
-                  alignItems: "center",
-                  padding: "16px 18px",
-                  transition: "background-color 0.3s ease",
-                  borderBottom: "1px solid #1f1f1f",
-                  backgroundColor:
+              return (
+                <Link
+                  key={stock.id}
+                  href={`/stocks/${stock.stockCode}`}
+                  className={`${styles.rowLink} ${
                     highlight === "up"
-                      ? "rgba(217, 79, 76, 0.15)"
+                      ? styles.rowUp
                       : highlight === "down"
-                      ? "rgba(68, 104, 196, 0.15)"
-                      : "transparent",
-                }}
-              >
-                <div
-                  style={{
-                    width: "62px",
-                    height: "62px",
-                    borderRadius: "50%",
-                    backgroundColor: "#f5f5f5",
-                    overflow: "hidden",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
+                      ? styles.rowDown
+                      : ""
+                  }`}
                 >
-                  <Image
-                    src={getLogo(stock.stockName)}
-                    alt={stock.stockName}
-                    width={getLogoSize(stock.stockName)}
-                    height={getLogoSize(stock.stockName)}
-                    style={{ objectFit: "contain" }}
-                  />
-                </div>
+                  <div className={styles.row}>
+                    <div className={styles.logoWrap}>
+                      <Image
+                        src={getLogo(stock.stockName)}
+                        alt={stock.stockName}
+                        width={getLogoSize(stock.stockName)}
+                        height={getLogoSize(stock.stockName)}
+                        className={styles.logo}
+                      />
+                    </div>
 
-                <div
-                  style={{
-                    color: "#ffffff",
-                    fontSize: "26px",
-                    fontWeight: 500,
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    minWidth: 0,
-                  }}
-                >
-                  {stock.stockName}
-                </div>
+                    <div className={styles.nameArea}>
+                      <div className={styles.stockName}>{stock.stockName}</div>
+                    </div>
 
-                <div style={{ textAlign: "right" }}>
-                  <div
-                    style={{
-                      fontSize: "26px",
-                      fontWeight: 700,
-                      color: isUp ? "#d94f4c" : isDown ? "#4468c4" : "#ffffff",
-                      transition: "transform 0.25s ease",
-                      transform: highlight ? "scale(1.08)" : "scale(1)",
-                    }}
-                  >
-                    {stock.changeRate != null
-                      ? `${stock.changeRate > 0 ? "+" : ""}${stock.changeRate}%`
-                      : "-"}
+                    <div className={styles.priceArea}>
+                      <div
+                        className={`${styles.changeRate} ${
+                          isUp
+                            ? styles.priceUp
+                            : isDown
+                            ? styles.priceDown
+                            : styles.priceNeutral
+                        } ${highlight ? styles.scaleUp : ""}`}
+                      >
+                        {stock.changeRate != null
+                          ? `${stock.changeRate > 0 ? "+" : ""}${stock.changeRate}%`
+                          : "-"}
+                      </div>
+
+                      <div className={`${styles.currentPrice} ${highlight ? styles.scaleSoft : ""}`}>
+                        {stock.currentPrice != null
+                          ? `${stock.currentPrice.toLocaleString()}원`
+                          : "-"}
+                      </div>
+                    </div>
                   </div>
-
-                  <div
-                    style={{
-                      marginTop: "6px",
-                      fontSize: "24px",
-                      fontWeight: 500,
-                      color: isUp ? "#d94f4c" : isDown ? "#4468c4" : "#dddddd",
-                      transition: "transform 0.25s ease",
-                      transform: highlight ? "scale(1.05)" : "scale(1)",
-                    }}
-                  >
-                    {stock.currentPrice != null
-                      ? `${stock.currentPrice.toLocaleString()}원`
-                      : "-"}
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+                </Link>
+              );
+            })
+          )}
         </div>
 
-        <div
-          style={{
-            marginTop: "20px",
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gap: "14px",
-          }}
-        >
-          <button
-            style={{
-              height: "90px",
-              borderRadius: "28px",
-              border: "2px solid #8060d4",
-              backgroundColor: "#d8c9f3",
-              color: "#111111",
-              fontSize: "28px",
-              fontWeight: 600,
-              boxShadow: "0 4px 10px rgba(128, 96, 212, 0.18)",
-              cursor: "pointer",
-            }}
-          >
-            main
-          </button>
-
-          <button
-            style={{
-              height: "90px",
-              borderRadius: "28px",
-              border: "2px solid #8060d4",
-              backgroundColor: "#d8c9f3",
-              color: "#111111",
-              fontSize: "28px",
-              fontWeight: 600,
-              boxShadow: "0 4px 10px rgba(128, 96, 212, 0.18)",
-              cursor: "pointer",
-            }}
-          >
+        <nav className={styles.bottomNav}>
+          <Link href="/ranking" className={styles.navItem}>
+            랭킹
+          </Link>
+          <Link href="/" className={styles.navItem}>
+            홈
+          </Link>
+          <Link href="/stocks" className={`${styles.navItem} ${styles.navActive}`}>
             전체종목
-          </button>
-        </div>
+          </Link>
+        </nav>
       </div>
     </div>
   );
