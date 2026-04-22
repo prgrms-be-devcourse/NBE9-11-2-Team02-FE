@@ -12,3 +12,21 @@ export interface StockPriceInfo {
     changeRate: string;
     tradeTime: string;
 }
+
+// 종목 차트 
+export interface CandleRes {
+    time: string;
+    open: number;
+    high: number;
+    low: number;
+    close: number;
+    volume: number;
+  }
+  
+  export interface ChartRes {
+    stockCode: string;
+    name: string;
+    period: string;
+    interval: string;
+    candles: CandleRes[];
+  }

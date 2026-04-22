@@ -2,14 +2,14 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import type { StockBasicInfo, StockPriceInfo } from '@/type/stock';
+import type { StockBasicInfo, StockPriceInfo, ChartRes } from '@/type/stock';
+
 import {
     createChart,
     LineSeries,
     IChartApi,
     ISeriesApi,
     ColorType,
-    LineStyle,
 } from 'lightweight-charts';
 
 // ─────────────────────────────────────────────
@@ -30,6 +30,7 @@ export default function StockDetailPage() {
     const [stockInfo, setStockInfo] = useState<StockBasicInfo | null>(null);
     const [priceInfo, setPriceInfo] = useState<StockPriceInfo | null>(null);
     const [period, setPeriod] = useState<ChartPeriod>('3M');
+    const [chartHighLow, setChartHighLow] = useState<{ high: number; low: number } | null>(null);
 
     const chartContainerRef = useRef<HTMLDivElement>(null);
     const chartRef = useRef<IChartApi | null>(null);
@@ -50,23 +51,44 @@ export default function StockDetailPage() {
     }, [stockCode]);
 
     useEffect(() => {
+        fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/stocks/${stockCode}/chart?period=${period}`)
+            .then((res) => res.json())
+            .then((body: ChartRes) => {
+                if (!seriesRef.current) return;
+                const data = body.candles.map((c) => ({
+                    time: c.time as any,
+                    value: Number(c.close),
+                }));
+
+                const prices = body.candles.map((c) => Number(c.close));
+                setChartHighLow({
+                    high: Math.max(...prices),
+                    low: Math.min(...prices),
+                });
+
+                seriesRef.current.setData(data);
+                chartRef.current?.timeScale().fitContent();
+            });
+    }, [stockCode, period]);
+
+    useEffect(() => {
         const es = new EventSource(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/stocks/${stockCode}/sse`);
-      
+
         es.onmessage = (e) => {
-          const data = JSON.parse(e.data);
-          setPriceInfo({
-            price: data.price,
-            changeSign: data.changeSign,
-            change: data.change,
-            changeRate: data.changeRate,
-            tradeTime: data.tradeTime,
-          });
+            const data = JSON.parse(e.data);
+            setPriceInfo({
+                price: data.price,
+                changeSign: data.changeSign,
+                change: data.change,
+                changeRate: data.changeRate,
+                tradeTime: data.tradeTime,
+            });
         };
-      
+
         es.onerror = () => es.close();
-      
+
         return () => es.close();
-      }, [stockCode]);
+    }, [stockCode]);
 
     // ── 차트 초기화 ──────────────────────────────
     useEffect(() => {
@@ -74,10 +96,8 @@ export default function StockDetailPage() {
 
         chartRef.current = createChart(chartContainerRef.current, {
             layout: {
-                // global.css --bg-page 와 맞춤
                 background: { type: ColorType.Solid, color: '#fdfbff' },
-                textColor: '#7a7a7a', // --text-tertiary
-                // Pretendard 는 global.css body 에 이미 선언됨 → 중복 제거
+                textColor: '#7a7a7a',
             },
             grid: {
                 vertLines: { visible: false },
@@ -105,7 +125,6 @@ export default function StockDetailPage() {
             height: chartContainerRef.current.clientHeight,
         });
 
-        // v5 API
         seriesRef.current = chartRef.current.addSeries(LineSeries, {
             color: isPositive ? '#d94f4c' : '#4468c4',
             lineWidth: 2,
@@ -132,14 +151,7 @@ export default function StockDetailPage() {
             chartRef.current = null;
             seriesRef.current = null;
         };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-
-    // ── 기간 변경 시 데이터 교체 ─────────────────
-    useEffect(() => {
-        if (!seriesRef.current || !chartRef.current) return;
-        chartRef.current.timeScale().fitContent();
-    }, [period]);
 
     // ─────────────────────────────────────────────
     // 렌더
@@ -182,7 +194,7 @@ export default function StockDetailPage() {
                             {stockInfo?.stockName}
                         </p>
                         <h1 className="text-4xl font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>
-                        {formatPrice(Number(priceInfo?.price ?? 0))}
+                            {formatPrice(Number(priceInfo?.price ?? 0))}
                             <span className="text-2xl font-medium ml-1">원</span>
                         </h1>
                         <div className="flex items-center gap-1.5 mt-2">
@@ -196,7 +208,7 @@ export default function StockDetailPage() {
                                 className="text-sm"
                                 style={{ color: isPositive ? 'var(--price-up)' : 'var(--price-down)' }}
                             >
-                                ({isPositive ? '+' : '-'}{Number(priceInfo?.changeRate ?? 0).toFixed(1)}%)
+                                ({isPositive ? '+' : ''}{Number(priceInfo?.changeRate ?? 0).toFixed(1)}%)
                             </span>
                             <span className="text-xs ml-1" style={{ color: 'var(--text-tertiary)' }}>
                                 전일 대비
@@ -212,13 +224,13 @@ export default function StockDetailPage() {
                             <div className="flex items-center gap-1.5">
                                 <span className="w-2 h-2 rounded-full" style={{ background: 'var(--price-up)' }} />
                                 <span className="text-xs" style={{ color: 'var(--text-tertiary)' }}>
-                                    {/* 고가 {formatPrice(priceInfo?.highPrice ?? 0)}원 */}
+                                    고가 {formatPrice(chartHighLow?.high ?? 0)}원
                                 </span>
                             </div>
                             <div className="flex items-center gap-1.5">
                                 <span className="w-2 h-2 rounded-full" style={{ background: 'var(--price-down)' }} />
                                 <span className="text-xs" style={{ color: 'var(--text-tertiary)' }}>
-                                    {/* 저가 {formatPrice(priceInfo?.lowPrice ?? 0)}원 */}
+                                    저가 {formatPrice(chartHighLow?.low ?? 0)}원
                                 </span>
                             </div>
                         </div>
