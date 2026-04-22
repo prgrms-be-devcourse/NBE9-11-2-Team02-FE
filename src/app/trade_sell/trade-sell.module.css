@@ -233,6 +233,26 @@
   animation: toastIn 0.2s ease, toastOut 0.3s ease 2.7s forwards;
 }
 
+.marketClosedAlert {
+  background-color: #ffeef0;
+  color: #d32f2f;
+  text-align: center;
+  padding: 8px;
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+
+.feeNotice {
+  background-color: #f9f9f9;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #eee;
+}
+
+.infoContainer {
+  margin-top: 10px;
+}
+
 @keyframes toastIn {
   from { opacity: 0; transform: translateX(-50%) translateY(0.5rem); }
   to   { opacity: 1; transform: translateX(-50%) translateY(0); }

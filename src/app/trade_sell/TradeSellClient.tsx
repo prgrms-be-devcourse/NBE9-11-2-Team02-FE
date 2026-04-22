@@ -21,22 +21,27 @@ export default function TradeSellClient() {
   useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const SLIPPAGE_RATE = 0.98;
 // URL 쿼리 파라미터에서 주식 정보를 가져오며, 없을 경우 기본값을 설정합니다.
   const stockCode = searchParams.get("stockCode") ?? "005930";
   const stockId = Number(searchParams.get("stockId") ?? "1");
   const stockName = searchParams.get("stockName") ?? "삼성전자";
 // 상태 관리: 서버 데이터(실시간 가격) 및 UI 인터랙션(입력, 토스트, 로딩)
-  const [currentPrice, setCurrentPrice] = useState<number | null>(null);
+  //const [currentPrice, setCurrentPrice] = useState<number | null>(null);
   const [changeSign, setChangeSign] = useState("");
   const [changeRate, setChangeRate] = useState("");
-  const [qtyDigits, setQtyDigits] = useState("");
+  //const [qtyDigits, setQtyDigits] = useState("");
   const [isBuying, setIsBuying] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
+  const [currentPrice, setCurrentPrice] = useState<number | null>(50000); // 5만원으로 고정
+const [qtyDigits, setQtyDigits] = useState("10"); // 10주 입력으로 고정
 
   // [추가] 나의 보유 주식 수량을 저장할 상태
   const [myMaxQty, setMyMaxQty] = useState(0);
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  
+  const [isMarketOpen, setIsMarketOpen] = useState(true);
 
   useEffect(() => {
     const accessToken = localStorage.getItem("accessToken");
@@ -60,7 +65,11 @@ export default function TradeSellClient() {
   // [추가] 보유 수량 초과 여부 계산
   const isExceeded = Number(qtyDigits) > myMaxQty;
 
-  const isButtonDisabled = currentPrice === null || qtyDigits === "" || isBuying||isExceeded;
+  // [추가] 수수료 계산 로직
+  const estimatedPrice = (currentPrice ?? 0) * SLIPPAGE_RATE;
+  const totalAmount = Number(qtyDigits) * estimatedPrice;
+
+  const isButtonDisabled = currentPrice === null || qtyDigits === "" || isBuying||isExceeded|| !isMarketOpen;
 
   const handleBuy = useCallback(async () => {
     if (isButtonDisabled) return;
@@ -81,7 +90,7 @@ export default function TradeSellClient() {
           "X-Idempotency-Key": crypto.randomUUID(),
           Authorization: `Bearer ${accessToken}`,
         },
-        body: JSON.stringify({ stockId, quantity: Number(qtyDigits) }),
+        body: JSON.stringify({ stockId, quantity: Number(qtyDigits), expectedPrice: currentPrice}),
       });
 
       if (!res.ok) {
@@ -97,7 +106,7 @@ export default function TradeSellClient() {
       );
       // [추가] 매도 성공 후 홈으로 이동 (경로가 '/'가 아니라면 해당 경로로 수정하세요)
       router.push('/');
-      
+
       setQtyDigits("");
     } catch {
       showToast("네트워크 오류가 발생했습니다.");
@@ -123,6 +132,34 @@ export default function TradeSellClient() {
 
     return () => es.close();
   }, [stockCode]);
+
+  // [추가] 장 운영 시간 체크 로직
+  useEffect(() => {
+    const checkMarketStatus = () => {
+      const now = new Date();
+      const day = now.getDay(); // 0:일, 1:월, ..., 6:토
+      const hour = now.getHours();
+      const minute = now.getMinutes();
+
+      // 주말(토, 일)인 경우 장 마감
+      if (day === 0 || day === 6) {
+        setIsMarketOpen(false);
+        return;
+      }
+
+      // 평일 09:00 ~ 15:30 확인
+      if (hour < 9 || (hour === 15 && minute >= 30) || hour > 15) {
+        setIsMarketOpen(false);
+      } else {
+        setIsMarketOpen(true);
+      }
+    };
+
+    checkMarketStatus(); // 마운트 시 즉시 체크
+    const timer = setInterval(checkMarketStatus, 60000); // 1분마다 체크
+
+    return () => clearInterval(timer);
+  }, []);
 
   const appendDigit = useCallback((d: string) => {
     setQtyDigits((prev) => {
@@ -183,6 +220,12 @@ export default function TradeSellClient() {
           </div>
           <div className={styles.topBarSpacer} aria-hidden />
         </div>
+        {/* [추가] 장 마감 알림 표시 */}
+        {!isMarketOpen && (
+          <div className={styles.marketClosedAlert}>
+            현재는 장 운영 시간이 아닙니다 (09:00~15:30)
+          </div>
+        )}
       </header>
 
       <div className={styles.body}>
@@ -204,15 +247,26 @@ export default function TradeSellClient() {
               </>
             )}
           </div>
-          {/* [추가] 보유 수량 정보 및 초과 시 경고 메시지 */}
-          <p className={isExceeded ? styles.errorInfo : styles.subInfo} style={{ color: isExceeded ? 'red' : 'inherit' }}>
-            {isExceeded 
-              ? `보유 수량을 초과했습니다 (보유: ${myMaxQty}주)` 
-              : `보유: ${myMaxQty.toLocaleString()}주 · ${qtyDigits && currentPrice !== null ? `총 ${formatKrw(Number(qtyDigits) * currentPrice)}` : "판매가능"}`
-            }
-          </p>
+          {/* [추가] 보유 수량 정보 및 경고 메시지 */}
+        <p className={isExceeded || !isMarketOpen ? styles.errorInfo : styles.subInfo} 
+           style={{ color: (isExceeded || !isMarketOpen) ? 'red' : 'inherit' }}>
+          {isExceeded 
+            ? `보유 수량을 초과했습니다 (보유: ${myMaxQty}주)` 
+            : !isMarketOpen 
+            ? "장 마감 시간으로 매도가 불가능합니다."
+            : `보유: ${myMaxQty.toLocaleString()}주 · ${qtyDigits && currentPrice !== null ? `총 ${formatKrw(Number(qtyDigits) * currentPrice)}` : "판매가능"}`
+          }
+        </p>
+        {/* [수정] "최소" 문구 적용 */}
+        {qtyDigits && currentPrice !== null && (
+          <div style={{ marginTop: '8px', fontSize: '0.85rem', color: '#666', padding: '8px', borderRadius: '4px', background: '#f9f9f9' }}>
+            <p>최소 {formatKrw(totalAmount)}</p>
+          </div>
+        )}
         </section>
-
+        <p style={{ fontWeight: 'bold', color: '#d32f2f' }}>
+              ⚠️ 시장 상황에 따라 최대 2% 차이가 발생할 수 있습니다.
+            </p>
         <div className={styles.keypadWrap}>
           <div className={styles.keypad} role="group" aria-label="숫자 키패드">
             {keys.map((row, ri) =>
@@ -250,7 +304,7 @@ export default function TradeSellClient() {
           onClick={handleBuy}
           disabled={isButtonDisabled}
         >
-          {isBuying ? "처리 중..." : isExceeded ? "수량 초과" : "판매하기"}
+          {isBuying ? "처리 중..." : !isMarketOpen ? "장 마감" : isExceeded ? "수량 초과" : "판매하기"}
         </button>
       </footer>
     </div>
