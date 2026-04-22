@@ -2,12 +2,12 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import type { StockBasicInfo, StockPriceInfo } from '@/type/stock';
 import {
     createChart,
     LineSeries,
     IChartApi,
     ISeriesApi,
-    LineData,
     ColorType,
     LineStyle,
 } from 'lightweight-charts';
@@ -16,52 +16,6 @@ import {
 // 타입
 // ─────────────────────────────────────────────
 type ChartPeriod = '3M' | '1Y';
-
-interface StockInfo {
-    stockCode: string;
-    stockName: string;
-    currentPrice: number;
-    priceChange: number;
-    changeRate: number;
-    highPrice: number;
-    lowPrice: number;
-}
-
-// ─────────────────────────────────────────────
-// 목업 데이터 (실제 연동 전 임시)
-// ─────────────────────────────────────────────
-const MOCK_STOCK: StockInfo = {
-    stockCode: '005930',
-    stockName: '삼성전자',
-    currentPrice: 207_000,
-    priceChange: 3_000,
-    changeRate: 1.4,
-    highPrice: 211_000,
-    lowPrice: 205_000,
-};
-
-function generateMockChartData(period: ChartPeriod): LineData[] {
-    const now = new Date();
-    const days = period === '3M' ? 90 : 365;
-    const data: LineData[] = [];
-    let price = 200_000;
-
-    for (let i = days; i >= 0; i--) {
-        const date = new Date(now);
-        date.setDate(date.getDate() - i);
-        if (date.getDay() === 0 || date.getDay() === 6) continue;
-
-        price += (Math.random() - 0.48) * 2_000;
-        price = Math.max(195_000, Math.min(220_000, price));
-
-        const yyyy = date.getFullYear();
-        const mm = String(date.getMonth() + 1).padStart(2, '0');
-        const dd = String(date.getDate()).padStart(2, '0');
-
-        data.push({ time: `${yyyy}-${mm}-${dd}` as any, value: Math.round(price) });
-    }
-    return data;
-}
 
 const formatPrice = (n: number) => n.toLocaleString('ko-KR');
 
@@ -73,14 +27,46 @@ export default function StockDetailPage() {
     const router = useRouter();
     const stockCode = params?.stockCode as string;
 
-    const [stock] = useState<StockInfo>(MOCK_STOCK);
+    const [stockInfo, setStockInfo] = useState<StockBasicInfo | null>(null);
+    const [priceInfo, setPriceInfo] = useState<StockPriceInfo | null>(null);
     const [period, setPeriod] = useState<ChartPeriod>('3M');
 
     const chartContainerRef = useRef<HTMLDivElement>(null);
     const chartRef = useRef<IChartApi | null>(null);
     const seriesRef = useRef<ISeriesApi<'Line'> | null>(null);
 
-    const isPositive = stock.priceChange >= 0;
+    // changeSign 1,2,3 = 상승/보합, 4,5 = 하락
+    const isPositive = !['4', '5'].includes(priceInfo?.changeSign ?? '');
+
+    useEffect(() => {
+        fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/stocks/${stockCode}`)
+            .then((res) => res.json())
+            .then((body) => {
+                setStockInfo({
+                    stockCode: body.data.stockCode,
+                    stockName: body.data.stockName,
+                });
+            });
+    }, [stockCode]);
+
+    useEffect(() => {
+        const es = new EventSource(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/stocks/${stockCode}/sse`);
+      
+        es.onmessage = (e) => {
+          const data = JSON.parse(e.data);
+          setPriceInfo({
+            price: data.price,
+            changeSign: data.changeSign,
+            change: data.change,
+            changeRate: data.changeRate,
+            tradeTime: data.tradeTime,
+          });
+        };
+      
+        es.onerror = () => es.close();
+      
+        return () => es.close();
+      }, [stockCode]);
 
     // ── 차트 초기화 ──────────────────────────────
     useEffect(() => {
@@ -99,7 +85,7 @@ export default function StockDetailPage() {
             },
             localization: {
                 priceFormatter: (price: number) => Math.round(price).toLocaleString('ko-KR'),
-              },
+            },
             rightPriceScale: {
                 borderColor: 'transparent',
                 scaleMargins: { top: 0.1, bottom: 0.1 },
@@ -110,7 +96,7 @@ export default function StockDetailPage() {
                 fixRightEdge: true,
             },
             crosshair: {
-                horzLine: { color: '#e4dff0', labelBackgroundColor: '#111111' }, // --border-soft / --text-primary
+                horzLine: { color: '#e4dff0', labelBackgroundColor: '#111111' },
                 vertLine: { color: '#e4dff0', labelBackgroundColor: '#111111' },
             },
             handleScroll: false,
@@ -121,7 +107,7 @@ export default function StockDetailPage() {
 
         // v5 API
         seriesRef.current = chartRef.current.addSeries(LineSeries, {
-            color: isPositive ? '#d94f4c' : '#4468c4', // --price-up / --price-down
+            color: isPositive ? '#d94f4c' : '#4468c4',
             lineWidth: 2,
             crosshairMarkerVisible: true,
             crosshairMarkerRadius: 5,
@@ -129,7 +115,6 @@ export default function StockDetailPage() {
             lastValueVisible: false,
         });
 
-        seriesRef.current.setData(generateMockChartData(period));
         chartRef.current.timeScale().fitContent();
 
         const observer = new ResizeObserver(() => {
@@ -153,7 +138,6 @@ export default function StockDetailPage() {
     // ── 기간 변경 시 데이터 교체 ─────────────────
     useEffect(() => {
         if (!seriesRef.current || !chartRef.current) return;
-        seriesRef.current.setData(generateMockChartData(period));
         chartRef.current.timeScale().fitContent();
     }, [period]);
 
@@ -195,10 +179,10 @@ export default function StockDetailPage() {
                     {/* 시세 정보 */}
                     <section className="pt-6 pb-5">
                         <p className="text-lg mb-1" style={{ color: 'var(--text-secondary)' }}>
-                            {stock.stockName}
+                            {stockInfo?.stockName}
                         </p>
                         <h1 className="text-4xl font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>
-                            {formatPrice(stock.currentPrice)}
+                        {formatPrice(Number(priceInfo?.price ?? 0))}
                             <span className="text-2xl font-medium ml-1">원</span>
                         </h1>
                         <div className="flex items-center gap-1.5 mt-2">
@@ -206,13 +190,13 @@ export default function StockDetailPage() {
                                 className="text-sm font-medium"
                                 style={{ color: isPositive ? 'var(--price-up)' : 'var(--price-down)' }}
                             >
-                                {isPositive ? '▲' : '▼'} {formatPrice(Math.abs(stock.priceChange))}원
+                                {isPositive ? '▲' : '▼'} {formatPrice(Math.abs(Number(priceInfo?.change ?? 0)))}원
                             </span>
                             <span
                                 className="text-sm"
                                 style={{ color: isPositive ? 'var(--price-up)' : 'var(--price-down)' }}
                             >
-                                ({isPositive ? '+' : '-'}{Math.abs(stock.changeRate).toFixed(1)}%)
+                                ({isPositive ? '+' : '-'}{Number(priceInfo?.changeRate ?? 0).toFixed(1)}%)
                             </span>
                             <span className="text-xs ml-1" style={{ color: 'var(--text-tertiary)' }}>
                                 전일 대비
@@ -228,13 +212,13 @@ export default function StockDetailPage() {
                             <div className="flex items-center gap-1.5">
                                 <span className="w-2 h-2 rounded-full" style={{ background: 'var(--price-up)' }} />
                                 <span className="text-xs" style={{ color: 'var(--text-tertiary)' }}>
-                                    고가 {formatPrice(stock.highPrice)}원
+                                    {/* 고가 {formatPrice(priceInfo?.highPrice ?? 0)}원 */}
                                 </span>
                             </div>
                             <div className="flex items-center gap-1.5">
                                 <span className="w-2 h-2 rounded-full" style={{ background: 'var(--price-down)' }} />
                                 <span className="text-xs" style={{ color: 'var(--text-tertiary)' }}>
-                                    저가 {formatPrice(stock.lowPrice)}원
+                                    {/* 저가 {formatPrice(priceInfo?.lowPrice ?? 0)}원 */}
                                 </span>
                             </div>
                         </div>
