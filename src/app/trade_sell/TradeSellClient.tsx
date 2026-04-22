@@ -25,14 +25,12 @@ export default function TradeSellClient() {
   const stockId = Number(searchParams.get("stockId") ?? "1");
   const stockName = searchParams.get("stockName") ?? "삼성전자";
 // 상태 관리: 서버 데이터(실시간 가격) 및 UI 인터랙션(입력, 토스트, 로딩)
-  //const [currentPrice, setCurrentPrice] = useState<number | null>(null);
+  const [currentPrice, setCurrentPrice] = useState<number | null>(null);
   const [changeSign, setChangeSign] = useState("");
   const [changeRate, setChangeRate] = useState("");
-  //const [qtyDigits, setQtyDigits] = useState("");
+  const [qtyDigits, setQtyDigits] = useState("");
   const [isBuying, setIsBuying] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
-  const [currentPrice, setCurrentPrice] = useState<number | null>(50000); // 5만원으로 고정
-const [qtyDigits, setQtyDigits] = useState("10"); // 10주 입력으로 고정
 
   // [추가] 나의 보유 주식 수량을 저장할 상태
   const [myMaxQty, setMyMaxQty] = useState(0);
@@ -187,6 +185,33 @@ const [qtyDigits, setQtyDigits] = useState("10"); // 10주 입력으로 고정
     ],
     [],
   );
+
+  // [추가] 물리 키보드 입력 처리
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // 숫자 키 (0-9) 처리
+      if (e.key >= "0" && e.key <= "9") {
+        appendDigit(e.key);
+      }
+      // 백스페이스 처리
+      else if (e.key === "Backspace") {
+        backspace();
+      }
+      // Enter 키 처리 (판매하기 버튼 실행)
+      else if (e.key === "Enter") {
+        if (!isButtonDisabled) {
+          handleBuy();
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    // 컴포넌트 언마운트 시 이벤트 리스너 제거 (중요!)
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [appendDigit, backspace, handleBuy, isButtonDisabled]);
 
   return (
     <div className={styles.page}>

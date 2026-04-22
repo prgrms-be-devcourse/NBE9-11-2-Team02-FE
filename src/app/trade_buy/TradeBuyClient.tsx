@@ -125,6 +125,33 @@ export default function TradeBuyClient() {
     [],
   );
 
+  // [추가] 물리 키보드 입력 처리
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // 숫자 키 (0-9) 처리
+      if (e.key >= "0" && e.key <= "9") {
+        appendDigit(e.key);
+      }
+      // 백스페이스 처리
+      else if (e.key === "Backspace") {
+        backspace();
+      }
+      // Enter 키 처리 (판매하기 버튼 실행)
+      else if (e.key === "Enter") {
+        if (!isButtonDisabled) {
+          handleBuy();
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    // 컴포넌트 언마운트 시 이벤트 리스너 제거 (중요!)
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [appendDigit, backspace, handleBuy, isButtonDisabled]);
+
   return (
     <div className={styles.page}>
       <header className={styles.header}>
