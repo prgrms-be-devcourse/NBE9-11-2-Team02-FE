@@ -162,14 +162,14 @@ export default function StocksPage() {
         </div>
 
         <nav className={styles.bottomNav}>
-          <Link href="/ranking" className={styles.navItem}>
-            랭킹
-          </Link>
           <Link href="/" className={styles.navItem}>
-            홈
+            main
           </Link>
-          <Link href="/stocks" className={`${styles.navItem} ${styles.navActive}`}>
+          <Link href="/stocks" className={styles.navItem}>
             전체종목
+          </Link>
+          <Link href="/ranking" className={`${styles.navItem} ${styles.navActive}`}>
+            랭킹
           </Link>
         </nav>
       </div>

@@ -172,7 +172,7 @@ export default function RankingPage() {
           className={`${styles.navButton} ${styles.navButtonActive}`}
           onClick={() => router.push("/ranking")}
         >
-          순위
+          랭킹
         </button>
       </nav>
 
