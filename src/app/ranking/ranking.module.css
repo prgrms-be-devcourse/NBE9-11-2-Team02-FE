@@ -1,0 +1,263 @@
+.page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-page);
+    color: var(--text-primary);
+    padding: 1rem 1rem 1.25rem;
+  }
+  
+  .header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    gap: 0.5rem;
+    align-items: center;
+  }
+  
+  .titleBox {
+    min-height: 4rem;
+    border-radius: 1rem;
+    background: var(--bg-card);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 1rem;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+  
+  .updateBox {
+    min-height: 4rem;
+    border-radius: 1rem;
+    background: var(--bg-card);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 0.875rem;
+    text-align: center;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    line-height: 1.35;
+  }
+  
+  .infoButton {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 999px;
+    background: var(--bg-card);
+    color: var(--text-secondary);
+    font-size: 1rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .listSection {
+    flex: 1;
+    margin-top: 1rem;
+    border-radius: 1.5rem;
+    background: var(--bg-section);
+    border: 1px solid var(--border-soft);
+    padding: 0.875rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    min-height: 0;
+  }
+  
+  .rankCard {
+    min-height: 5.5rem;
+    border-radius: 1.25rem;
+    background: var(--bg-card);
+    display: grid;
+    grid-template-columns: 2rem 3.5rem minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.875rem 0.875rem 0.875rem 1rem;
+  }
+  
+  .rankNumber {
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    text-align: center;
+  }
+  
+  .badge {
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border-soft);
+    box-shadow: 0 4px 10px rgba(17, 17, 17, 0.08);
+  }
+  
+  .badgeText {
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+  }
+  
+  .badgeFirst {
+    background: linear-gradient(180deg, #f4e7a5 0%, #d7b64e 100%);
+    color: #4f3d00;
+  }
+  
+  .badgeSecond {
+    background: linear-gradient(180deg, #ededed 0%, #b9bcc3 100%);
+    color: #3d424a;
+  }
+  
+  .badgeThird {
+    background: linear-gradient(180deg, #e8c2a6 0%, #b8734f 100%);
+    color: #4f2816;
+  }
+  
+  .badgeFourth {
+    background: linear-gradient(180deg, rgba(128, 96, 212, 0.25) 0%, rgba(128, 96, 212, 0.45) 100%);
+    color: var(--accent-primary);
+  }
+  
+  .badgeFifth {
+    background: linear-gradient(180deg, rgba(128, 96, 212, 0.18) 0%, rgba(128, 96, 212, 0.32) 100%);
+    color: var(--accent-primary);
+  }
+  
+  .badgeDefault {
+    background: var(--bg-section);
+    color: var(--text-secondary);
+  }
+  
+  .userInfo {
+    min-width: 0;
+  }
+  
+  .nickname {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .valueBox {
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  
+  .profitRate {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+  
+  .totalAsset {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+  
+  .stateBox {
+    flex: 1;
+    min-height: 12rem;
+    border-radius: 1.25rem;
+    background: var(--bg-card);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 1rem;
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+  }
+  
+  .bottomNav {
+    margin-top: 1rem;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+  }
+  
+  .navButton {
+    height: 3.75rem;
+    border-radius: 1.25rem;
+    background: rgba(128, 96, 212, 0.18);
+    border: 1px solid var(--border-soft);
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    font-weight: 700;
+    box-shadow: 0 4px 10px rgba(128, 96, 212, 0.14);
+  }
+  
+  .navButtonActive {
+    background: rgba(128, 96, 212, 0.3);
+    color: var(--accent-primary);
+  }
+  
+  .modalOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(17, 17, 17, 0.28);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    z-index: 100;
+  }
+  
+  .modalCard {
+    width: min(100%, 22rem);
+    border-radius: 1.5rem;
+    background: var(--bg-page);
+    border: 1px solid var(--border-soft);
+    box-shadow: 0 10px 30px rgba(17, 17, 17, 0.18);
+    padding: 1.25rem 1.125rem 1.125rem;
+    position: relative;
+  }
+  
+  .modalClose {
+    position: absolute;
+    top: 0.875rem;
+    right: 0.875rem;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 999px;
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .modalTitle {
+    font-size: 1.125rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 0.75rem;
+  }
+  
+  .modalTitle + .modalList {
+    margin-bottom: 1rem;
+  }
+  
+  .modalList {
+    padding-left: 1.1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+  
+  .modalList li {
+    list-style: disc;
+  }

@@ -217,6 +217,48 @@
   opacity: 0.45;
 }
 
+.priceLabelRow {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  margin-bottom: -0.3rem;
+}
+
+.priceLabelRow .priceLabel {
+  margin-bottom: 0;
+}
+
+.infoBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.125rem;
+  height: 1.125rem;
+  border-radius: 50%;
+  border: 1.5px solid var(--text-secondary);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 0.625rem;
+  font-weight: 700;
+  cursor: pointer;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.infoBtn:active {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.priceNotice {
+  margin-bottom: 0.5rem;
+  padding: 0.5rem 0.625rem;
+  background: var(--bg-page);
+  border-radius: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
 .toast {
   position: fixed;
   bottom: 5rem;

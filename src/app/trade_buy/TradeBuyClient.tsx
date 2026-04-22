@@ -3,6 +3,7 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import styles from "./trade-buy.module.css";
+import { useAuth } from "@/hooks/useAuth";
 
 function formatKrw(n: number): string {
   return `${n.toLocaleString("ko-KR")}원`;
@@ -14,6 +15,7 @@ function formatQtyDigits(raw: string): string {
 }
 
 export default function TradeBuyClient() {
+  useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -26,6 +28,7 @@ export default function TradeBuyClient() {
   const [changeRate, setChangeRate] = useState("");
   const [qtyDigits, setQtyDigits] = useState("");
   const [isBuying, setIsBuying] = useState(false);
+  const [showPriceInfo, setShowPriceInfo] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -57,7 +60,7 @@ export default function TradeBuyClient() {
           "X-Idempotency-Key": crypto.randomUUID(),
           Authorization: `Bearer ${accessToken}`,
         },
-        body: JSON.stringify({ stockId, quantity: Number(qtyDigits) }),
+        body: JSON.stringify({ stockId, quantity: Number(qtyDigits), expectedPrice: currentPrice }),
       });
 
       if (!res.ok) {
@@ -184,7 +187,24 @@ export default function TradeBuyClient() {
 
       <div className={styles.body}>
         <section className={styles.card} aria-label="구매 가격">
-          <p className={styles.priceLabel}>구매할 가격(시장가)</p>
+          <div className={styles.priceLabelRow}>
+            <p className={styles.priceLabel}>구매할 가격(시장가)</p>
+            <button
+              type="button"
+              className={styles.infoBtn}
+              onClick={() => setShowPriceInfo((v) => !v)}
+              aria-label="가격 안내"
+            >
+              ?
+            </button>
+          </div>
+          {showPriceInfo && (
+            <p className={styles.priceNotice}>
+              구매 버튼을 누른 순간보다 가격이 2% 넘게 올랐거나,<br />
+              실시간 시세가 10초 넘게 지연된 경우 구매되지 않아요.<br />
+              더 싸게 구매할 수 있으면 그대로 진행돼요.
+            </p>
+          )}
           <p className={styles.priceValue}>
             {currentPrice !== null ? formatKrw(currentPrice) : "-"}
           </p>

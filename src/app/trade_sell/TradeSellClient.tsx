@@ -2,6 +2,7 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useAuth } from "@/hooks/useAuth";
 import styles from "./trade-sell.module.css";
 /** * 숫자를 한국 원화 형식(₩)으로 포맷팅합니다. 
  * 예: 10000 -> "10,000원"
@@ -17,6 +18,7 @@ function formatQtyDigits(raw: string): string {
 }
 
 export default function TradeSellClient() {
+  useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
   const SLIPPAGE_RATE = 0.98;
@@ -39,13 +41,13 @@ const [toast, setToast] = useState<string | null>(null);
   
   const [isMarketOpen, setIsMarketOpen] = useState(true);
 
-  /** [추가] 페이지 로드 시 나의 보유 주식 수량 조회 */
   useEffect(() => {
-    // 실제 userId는 로그인 세션 등에서 가져오는 것이 좋습니다.
-    fetch(`/api/asset/accounts/1`) 
+    const accessToken = localStorage.getItem("accessToken");
+    fetch(`/api/asset/accounts`, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    })
       .then((res) => res.json())
       .then((res) => {
-        // 서버 응답에서 해당 주식 코드를 찾아 보유 수량 저장
         const targetStock = res.data.stocks.find((s: any) => s.stockCode === stockCode);
         setMyMaxQty(targetStock ? targetStock.quantity : 0);
       })
@@ -78,11 +80,13 @@ const [toast, setToast] = useState<string | null>(null);
 
     setIsBuying(true);
     try {
-      const res = await fetch("/api/trades/sell?userId=1", {
+      const accessToken = localStorage.getItem("accessToken");
+      const res = await fetch("/api/trades/sell", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "X-Idempotency-Key": crypto.randomUUID(),
+          Authorization: `Bearer ${accessToken}`,
         },
         body: JSON.stringify({ stockId, quantity: Number(qtyDigits), expectedPrice: currentPrice}),
       });
