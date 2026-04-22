@@ -41,19 +41,29 @@ export default function StockDetailPage() {
 
     useEffect(() => {
         fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/stocks/${stockCode}`)
-            .then((res) => res.json())
+            .then((res) => {
+                if (!res.ok) return res.json().then((body) => { throw new Error(body.message); }); // ← 추가
+                return res.json();
+            })
             .then((body) => {
                 setStockInfo({
                     stockId: body.data.stockId,
                     stockCode: body.data.stockCode,
                     stockName: body.data.stockName,
                 });
+            })
+            .catch((err) => {  // ← 추가
+                alert(err.message);
+                router.back();
             });
     }, [stockCode]);
 
     useEffect(() => {
         fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/stocks/${stockCode}/chart?period=${period}`)
-            .then((res) => res.json())
+            .then((res) => {
+                if (!res.ok) return res.json().then((body) => { throw new Error(body.message); });
+                return res.json();
+            })
             .then((body: ChartRes) => {
                 if (!seriesRef.current) return;
                 const data = body.candles.map((c) => ({
@@ -69,6 +79,9 @@ export default function StockDetailPage() {
 
                 seriesRef.current.setData(data);
                 chartRef.current?.timeScale().fitContent();
+            })
+            .catch((err) => {
+                alert(err.message ?? '차트 데이터를 불러올 수 없습니다.');
             });
     }, [stockCode, period]);
 
