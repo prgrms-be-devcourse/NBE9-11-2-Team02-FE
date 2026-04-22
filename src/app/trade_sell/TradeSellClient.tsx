@@ -25,12 +25,12 @@ export default function TradeSellClient() {
   const stockId = Number(searchParams.get("stockId") ?? "1");
   const stockName = searchParams.get("stockName") ?? "삼성전자";
 // 상태 관리: 서버 데이터(실시간 가격) 및 UI 인터랙션(입력, 토스트, 로딩)
-  const [currentPrice, setCurrentPrice] = useState<number | null>(null);
-  const [changeSign, setChangeSign] = useState("");
-  const [changeRate, setChangeRate] = useState("");
-  const [qtyDigits, setQtyDigits] = useState("");
-  const [isBuying, setIsBuying] = useState(false);
-  const [toast, setToast] = useState<string | null>(null);
+const [currentPrice, setCurrentPrice] = useState<number | null>(null);
+const [changeSign, setChangeSign] = useState("");
+const [changeRate, setChangeRate] = useState("");
+const [qtyDigits, setQtyDigits] = useState("");
+const [isBuying, setIsBuying] = useState(false);
+const [toast, setToast] = useState<string | null>(null);
 
   // [추가] 나의 보유 주식 수량을 저장할 상태
   const [myMaxQty, setMyMaxQty] = useState(0);
