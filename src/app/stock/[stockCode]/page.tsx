@@ -44,6 +44,7 @@ export default function StockDetailPage() {
             .then((res) => res.json())
             .then((body) => {
                 setStockInfo({
+                    stockId: body.data.stockId,
                     stockCode: body.data.stockCode,
                     stockName: body.data.stockName,
                 });
@@ -274,12 +275,14 @@ export default function StockDetailPage() {
                 >
                     <div className="flex gap-1">
                         <button
+                            onClick={() => router.push(`/trade_sell?stockCode=${stockInfo?.stockCode}&stockId=${stockInfo?.stockId}&stockName=${stockInfo?.stockName}`)}
                             className="flex-1 py-3.5 rounded-2xl text-white text-base font-bold transition-all active:scale-95"
                             style={{ background: 'var(--price-down)', paddingTop: '1.25rem', paddingBottom: '1.25rem' }}
                         >
                             판매하기
                         </button>
                         <button
+                            onClick={() => router.push(`/trade_buy?stockCode=${stockInfo?.stockCode}&stockId=${stockInfo?.stockId}&stockName=${stockInfo?.stockName}`)}
                             className="flex-1 py-3.5 rounded-2xl text-white text-base font-bold transition-all active:scale-95"
                             style={{ background: 'var(--price-up)', paddingTop: '1.25rem', paddingBottom: '1.25rem' }}
                         >
