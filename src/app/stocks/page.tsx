@@ -90,89 +90,91 @@ export default function StocksPage() {
 
   return (
     <div className={styles.page}>
-      <div className={styles.phone}>
-        <div className={styles.header}>
-          <h1 className={styles.title}>코스피 상장 종목</h1>
-        </div>
+      <header className={styles.header}>
+        <h1 className={styles.title}>코스피 상장 종목</h1>
+      </header>
 
-        <div className={styles.list}>
-          {error ? (
-            <div className={styles.messageError}>{error}</div>
-          ) : stocks.length === 0 ? (
-            <div className={styles.messageLoading}>종목 데이터를 불러오는 중입니다.</div>
-          ) : (
-            stocks.map((stock) => {
-              const isUp = (stock.changeRate ?? 0) > 0;
-              const isDown = (stock.changeRate ?? 0) < 0;
-              const highlight = highlightMap[stock.id];
+      <main className={styles.list}>
+        {error ? (
+          <div className={styles.messageError}>{error}</div>
+        ) : stocks.length === 0 ? (
+          <div className={styles.messageLoading}>종목 데이터를 불러오는 중입니다.</div>
+        ) : (
+          stocks.map((stock) => {
+            const isUp = (stock.changeRate ?? 0) > 0;
+            const isDown = (stock.changeRate ?? 0) < 0;
+            const highlight = highlightMap[stock.id];
 
-              return (
-                <Link
-                  key={stock.id}
-                  href={`/stocks/${stock.stockCode}`}
-                  className={`${styles.rowLink} ${
-                    highlight === "up"
-                      ? styles.rowUp
-                      : highlight === "down"
-                      ? styles.rowDown
-                      : ""
-                  }`}
-                >
-                  <div className={styles.row}>
-                    <div className={styles.logoWrap}>
-                      <Image
-                        src={getLogo(stock.stockName)}
-                        alt={stock.stockName}
-                        width={getLogoSize(stock.stockName)}
-                        height={getLogoSize(stock.stockName)}
-                        className={styles.logo}
-                      />
+            return (
+              <Link
+                key={stock.id}
+                href={`/stock/${stock.stockCode}`}
+                className={`${styles.rowLink} ${
+                  highlight === "up"
+                    ? styles.rowUp
+                    : highlight === "down"
+                    ? styles.rowDown
+                    : ""
+                }`}
+              >
+                <div className={styles.row}>
+                  <div className={styles.logoWrap}>
+                    <Image
+                      src={getLogo(stock.stockName)}
+                      alt={stock.stockName}
+                      width={getLogoSize(stock.stockName)}
+                      height={getLogoSize(stock.stockName)}
+                      className={styles.logo}
+                    />
+                  </div>
+
+                  <div className={styles.nameArea}>
+                    <div className={styles.stockName}>{stock.stockName}</div>
+                  </div>
+
+                  <div className={styles.priceArea}>
+                    <div
+                      className={`${styles.changeRate} ${
+                        isUp
+                          ? styles.priceUp
+                          : isDown
+                          ? styles.priceDown
+                          : styles.priceNeutral
+                      } ${highlight ? styles.scaleUp : ""}`}
+                    >
+                      {stock.changeRate != null
+                        ? `${stock.changeRate > 0 ? "+" : ""}${stock.changeRate}%`
+                        : "-"}
                     </div>
 
-                    <div className={styles.nameArea}>
-                      <div className={styles.stockName}>{stock.stockName}</div>
-                    </div>
-
-                    <div className={styles.priceArea}>
-                      <div
-                        className={`${styles.changeRate} ${
-                          isUp
-                            ? styles.priceUp
-                            : isDown
-                            ? styles.priceDown
-                            : styles.priceNeutral
-                        } ${highlight ? styles.scaleUp : ""}`}
-                      >
-                        {stock.changeRate != null
-                          ? `${stock.changeRate > 0 ? "+" : ""}${stock.changeRate}%`
-                          : "-"}
-                      </div>
-
-                      <div className={`${styles.currentPrice} ${highlight ? styles.scaleSoft : ""}`}>
-                        {stock.currentPrice != null
-                          ? `${stock.currentPrice.toLocaleString()}원`
-                          : "-"}
-                      </div>
+                    <div
+                      className={`${styles.currentPrice} ${
+                        highlight ? styles.scaleSoft : ""
+                      }`}
+                    >
+                      {stock.currentPrice != null
+                        ? `${stock.currentPrice.toLocaleString()}원`
+                        : "-"}
                     </div>
                   </div>
-                </Link>
-              );
-            })
-          )}
-        </div>
+                </div>
+              </Link>
+            );
+          })
+        )}
+      </main>
 
-        <nav className={styles.bottomNav}>
-          <Link href="/ranking" className={styles.navItem}>
-            랭킹
-          </Link>
-          <Link href="/" className={styles.navItem}>
-            홈
-          </Link>
-          <Link href="/stocks" className={`${styles.navItem} ${styles.navActive}`}>
-            전체종목
-          </Link>
-        </nav>
-      </div>
+      <nav className={styles.bottomNav}>
+        <Link href="/" className={styles.navItem}>
+          main
+        </Link>
+        <Link href="/stocks" className={`${styles.navItem} ${styles.navActive}`}>
+          전체종목
+        </Link>
+        <Link href="/ranking" className={styles.navItem}>
+          랭킹
+        </Link>
+      </nav>
     </div>
   );
 }
