@@ -106,8 +106,9 @@ export default function StocksPage() {
             const highlight = highlightMap[stock.id];
 
             return (
-              <div
+              <Link
                 key={stock.id}
+                href={`/stock/${stock.stockCode}`}
                 className={`${styles.rowLink} ${
                   highlight === "up"
                     ? styles.rowUp
@@ -157,7 +158,7 @@ export default function StocksPage() {
                     </div>
                   </div>
                 </div>
-              </div>
+              </Link>
             );
           })
         )}
