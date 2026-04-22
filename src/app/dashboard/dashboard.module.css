@@ -1,0 +1,226 @@
+.container {
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    background: var(--bg-page);
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.serviceName {
+    padding: 1rem 2rem;
+    background: var(--bg-card);
+    border-radius: 1.25rem;
+    font-weight: 700;
+}
+
+.searchIcon {
+    width: 3.5rem;
+    height: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 1.25rem;
+    border: 2px solid var(--accent-primary);
+    color: var(--accent-primary);
+}
+
+.logoutBtn {
+    padding: 0.75rem 1.25rem;
+    /* 💡 텍스트에 맞춰 여백 조정 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 1.25rem;
+    border: 2px solid var(--accent-primary);
+    color: var(--accent-primary);
+    font-weight: 700;
+    font-size: 0.85rem;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.logoutBtn:active {
+    background: rgba(128, 96, 212, 0.1);
+    transform: scale(0.95);
+}
+
+.profileCard {
+    padding: 1rem 1.5rem;
+    background: var(--bg-card);
+    border-radius: 1.25rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nickname {
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.badgeGroup {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.depositCard {
+    padding: 1.5rem;
+    background: var(--bg-card);
+    border-radius: 1.5rem;
+}
+
+.label {
+    font-size: 0.85rem;
+    color: var(--text-tertiary);
+    margin-bottom: 0.5rem;
+}
+
+.amount {
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-align: right;
+}
+
+.investmentSummary {
+    padding: 0.5rem 0;
+}
+
+.totalValue {
+    font-size: 2.25rem;
+    font-weight: 800;
+    margin: 0.25rem 0;
+}
+
+.profitPlus {
+    color: var(--price-up);
+    font-weight: 700;
+}
+
+.profitMinus {
+    color: var(--price-down);
+    font-weight: 700;
+}
+
+.stockSection {
+    background: var(--bg-section);
+    border-radius: 1.5rem;
+    padding: 1.5rem;
+    border: 1px solid var(--border-soft);
+}
+
+.sectionTitle {
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.stockList {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.stockItem {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.stockIcon {
+    width: 3rem;
+    height: 3rem;
+    background: #222;
+    border-radius: 50%;
+}
+
+.stockInfo {
+    flex: 1;
+}
+
+.stockName {
+    font-weight: 700;
+    margin: 0;
+}
+
+.stockQty {
+    font-size: 0.8rem;
+    color: var(--text-tertiary);
+}
+
+.stockValueInfo {
+    text-align: right;
+}
+
+.stockEval {
+    font-weight: 700;
+    margin: 0;
+}
+
+.itemProfitPlus {
+    font-size: 0.8rem;
+    color: var(--price-up);
+}
+
+.itemProfitMinus {
+    font-size: 0.8rem;
+    color: var(--price-down);
+}
+
+.bottomNav {
+    display: flex;
+    border-radius: 1.5rem;
+    border: 2px solid var(--accent-primary);
+    overflow: hidden;
+}
+
+.bottomNav div {
+    flex: 1;
+    padding: 1.25rem;
+    text-align: center;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.navActive {
+    background: rgba(128, 96, 212, 0.15);
+    color: var(--accent-primary);
+    border-right: 1px solid var(--border-soft);
+}
+
+.loading {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    padding: 1.25rem;
+    /* 💡 하단 네비게이션 바 높이(약 4.5rem)보다 큰 여백을 주어 잘림을 방지합니다. */
+    padding-bottom: 6rem; 
+    background: var(--bg-page);
+    /* 만약 스크롤이 안 된다면 아래 설정을 확인하세요 */
+    height: auto;
+    overflow: visible;
+  }
+  
+  .stockItem {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    /* 💡 클릭 가능하다는 시각적 힌트 추가 */
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  
+  .stockItem:active {
+    opacity: 0.7; /* 클릭 시 살짝 투명해지는 효과 */
+  }

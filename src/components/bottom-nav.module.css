@@ -1,0 +1,41 @@
+/* 💡 네비게이션을 감싸는 여백 처리 */
+.navWrapper {
+  width: 100%;
+  padding-top: 1rem; /* 위쪽 요소와의 간격 */
+  background: var(--bg-page);
+}
+
+.bottomNav {
+  display: flex;
+  /* 💡 시안의 핵심: 선명한 보라색 테두리 적용 */
+  border: 2px solid var(--accent-primary); 
+  border-radius: 1.5rem; /* 둥근 테두리 */
+  overflow: hidden; /* 자식 요소가 테두리를 넘지 않게 함 */
+  background: var(--bg-card);
+}
+
+.navItem, .navActive {
+  flex: 1;
+  padding: 1.25rem 0;
+  text-align: center;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: var(--text-primary);
+}
+
+/* 💡 아이템 사이의 수직 구분선 (마지막 아이템 제외) */
+.navItem:not(:last-child), 
+.navActive:not(:last-child) {
+  border-right: 1px solid var(--border-soft);
+}
+
+/* 💡 활성화된 탭 스타일 (연한 보라색 배경) */
+.navActive {
+  background: rgba(128, 96, 212, 0.15);
+  color: var(--accent-primary);
+}
+
+.navItem:hover {
+  background: var(--bg-section);
+}

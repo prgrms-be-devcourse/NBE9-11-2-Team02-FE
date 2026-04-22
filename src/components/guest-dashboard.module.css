@@ -1,0 +1,142 @@
+.page {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-page);
+}
+
+.header {
+  padding: 1.5rem 1.25rem 0.75rem;
+}
+
+.title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.subtitle {
+  margin: 0.4rem 0 0;
+  font-size: 0.9rem;
+  color: var(--text-tertiary);
+}
+
+.body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  padding: 0.5rem 1.25rem 1rem;
+}
+
+.card {
+  border: 1px solid var(--border-soft);
+  border-radius: 1rem;
+  padding: 1rem;
+  background: var(--bg-section);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.sectionTitle {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.authButtons {
+  margin-top: 0.9rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem;
+}
+
+.primaryButton,
+.secondaryButton,
+.footerButton,
+.moreButton {
+  border: none;
+  border-radius: 0.75rem;
+  padding: 0.75rem 0.8rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.primaryButton,
+.footerButton {
+  background: var(--accent-primary);
+  color: #fff;
+}
+
+.secondaryButton,
+.moreButton {
+  background: rgba(128, 96, 212, 0.12);
+  color: var(--accent-primary);
+}
+
+.listHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.stockList {
+  margin-top: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.stockItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid var(--border-soft);
+  border-radius: 0.75rem;
+  padding: 0.7rem 0.8rem;
+  background: var(--bg-page);
+}
+
+.stockInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.stockName {
+  margin: 0;
+  font-size: 0.93rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.stockCode {
+  margin: 0;
+  font-size: 0.78rem;
+  color: var(--text-tertiary);
+}
+
+.stockPrice {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--accent-primary);
+}
+
+.emptyText {
+  margin: 0.3rem 0;
+  text-align: center;
+  color: var(--text-tertiary);
+  font-size: 0.85rem;
+}
+
+.footer {
+  padding: 0.75rem 1.25rem 1.2rem;
+}
+
+.footerButton {
+  width: 100%;
+}
