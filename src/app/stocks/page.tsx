@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import styles from "./stocks.module.css";
 
 const getLogo = (name: string) => {
@@ -38,6 +39,8 @@ type Stock = {
 type HighlightMap = Record<number, "up" | "down" | null>;
 
 export default function StocksPage() {
+  const router = useRouter();
+
   const [stocks, setStocks] = useState<Stock[]>([]);
   const [highlightMap, setHighlightMap] = useState<HighlightMap>({});
   const [error, setError] = useState("");
@@ -87,6 +90,16 @@ export default function StocksPage() {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
   }, []);
+
+  const handleMainClick = () => {
+    const accessToken = localStorage.getItem("accessToken");
+
+    if (accessToken) {
+      router.push("/dashboard");
+    } else {
+      router.push("/");
+    }
+  };
 
   return (
     <div className={styles.page}>
@@ -165,12 +178,18 @@ export default function StocksPage() {
       </main>
 
       <nav className={styles.bottomNav}>
-        <Link href="/" className={styles.navItem}>
+        <button
+          type="button"
+          className={styles.navItem}
+          onClick={handleMainClick}
+        >
           main
-        </Link>
+        </button>
+
         <Link href="/stocks" className={`${styles.navItem} ${styles.navActive}`}>
           전체종목
         </Link>
+
         <Link href="/ranking" className={styles.navItem}>
           랭킹
         </Link>

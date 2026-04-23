@@ -1,9 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./ranking.module.css";
-import { useAuth } from "@/hooks/useAuth";
 
 type RankingItem = {
   userId: number;
@@ -58,17 +57,27 @@ function getBadgeClass(rank: number) {
 }
 
 export default function RankingPage() {
-  useAuth();
   const router = useRouter();
+  const redirectHandledRef = useRef(false);
+
   const [rankings, setRankings] = useState<RankingItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
-    const fetchRankings = async () => {
-      const accessToken = localStorage.getItem("accessToken");
+    if (redirectHandledRef.current) return;
 
+    const accessToken = localStorage.getItem("accessToken");
+
+    if (!accessToken) {
+      redirectHandledRef.current = true;
+      alert("로그인이 필요합니다.");
+      router.push("/login");
+      return;
+    }
+
+    const fetchRankings = async () => {
       try {
         setIsLoading(true);
         setError("");
@@ -85,6 +94,16 @@ export default function RankingPage() {
 
         if (!res.ok) {
           const data = await res.json().catch(() => null);
+
+          if (res.status === 401 || res.status === 403) {
+            if (!redirectHandledRef.current) {
+              redirectHandledRef.current = true;
+              alert("로그인이 필요합니다.");
+              router.push("/login");
+            }
+            return;
+          }
+
           throw new Error(data?.message ?? "랭킹 조회에 실패했습니다.");
         }
 
@@ -137,7 +156,6 @@ export default function RankingPage() {
     <div className={styles.page}>
       <header className={styles.header}>
         <div className={styles.titleBox}>Together 랭킹</div>
-
         <div className={styles.updateBox}>랭킹 갱신 시각: 매일 00:00</div>
 
         <button
@@ -178,10 +196,7 @@ export default function RankingPage() {
 
       {isModalOpen && (
         <div className={styles.modalOverlay} onClick={() => setIsModalOpen(false)}>
-          <div
-            className={styles.modalCard}
-            onClick={(e) => e.stopPropagation()}
-          >
+          <div className={styles.modalCard} onClick={(e) => e.stopPropagation()}>
             <button
               type="button"
               className={styles.modalClose}
