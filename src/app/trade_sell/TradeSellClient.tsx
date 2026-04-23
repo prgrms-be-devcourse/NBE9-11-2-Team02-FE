@@ -99,6 +99,7 @@ const [toast, setToast] = useState<string | null>(null);
 
       const result = await res.json();
       const { stockName: name, quantity, price } = result.data;
+      setMyMaxQty((prev) => prev - quantity);
       showToast(
         `${name} ${quantity.toLocaleString("ko-KR")}주 매도 완료 (${price.toLocaleString("ko-KR")}원)`,
       );
