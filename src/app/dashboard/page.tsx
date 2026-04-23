@@ -43,10 +43,11 @@ export default function DashboardPage() {
     }).then((res) => {
       // 서버 응답 구조에 따라 deposit 필드를 세팅합니다.
       setDeposit(res.data.deposit || 0);
+      setNickname(res.data.nickname || "사용자");
     }).catch(console.error);
 
     // 유저 프로필 조회 로직 (필요 시 추가)
-    setNickname("진우");
+    //setNickname("진우");
   }, []);
 
   const totalSummary = useMemo(() => {
