@@ -27,6 +27,8 @@ const getLogo = (name: string) => {
 };
 
 
+
+
 export default function DashboardPage() {
   useAuth();
   const router = useRouter();
@@ -85,7 +87,15 @@ export default function DashboardPage() {
     <div className={styles.container}>
       {/* 1. 상단 헤더 영역 */}
       <header className={styles.header}>
-        <div className={styles.serviceName}>서비스 네임</div>
+      <div className={styles.serviceName}>
+        <Image
+          src="/icon/TwoGetMore.png"
+          alt="서비스 네임"
+          width={40}
+          height={40}
+        />
+        <span>두게더</span>
+      </div>
         <button onClick={onLogout} className={styles.logoutBtn}>
           로그아웃
         </button>

@@ -19,6 +19,15 @@
     font-weight: 700;
 }
 
+.serviceName {
+    display: flex;
+    align-items: flex-end;  /* 👈 핵심: 바닥 정렬 */
+    gap: 8px;
+  }
+  .serviceName span {
+    font-size: 20px;  /* 기본보다 살짝 크게 */
+    font-weight: 600; /* 선택: 좀 더 또렷하게 */
+  }
 .searchIcon {
     width: 3.5rem;
     height: 3rem;
