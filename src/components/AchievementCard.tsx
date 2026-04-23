@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Achievement } from '@/type/Achievement';
+import { Achievement } from '@/type/achievement';
 
 interface Props {
   achievement: Achievement;
@@ -45,10 +45,6 @@ const AchievementCard = ({ achievement }: Props) => {
         {/* 하단 보상 정보 영역 */}
         <div className="mt-auto pt-4 border-t border-gray-50 flex items-center justify-between">
           <div className="flex items-center gap-1.5">
-            <span className="text-xs text-gray-400 font-bold uppercase tracking-tighter">Reward</span>
-            <span className={`text-sm font-bold ${isAchieved ? 'text-yellow-500' : 'text-gray-400'}`}>
-              🪙 {reward}
-            </span>
           </div>
           
           {isAchieved && achievedAt && (

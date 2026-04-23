@@ -6,7 +6,6 @@ import Link from "next/link";
 import { fetchApi } from "@/lib/client";
 import { LoginReq, UsersRes } from "@/type/user";
 import Image from "next/image";
-import styles from "@/app/dashboard/dashboard.module.css"
 
 export default function LoginPage() {
   const router = useRouter();

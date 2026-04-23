@@ -6,7 +6,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { fetchApi } from "@/lib/client";
 import BottomNav from "@/components/BottomNav";
 import AchievementCard from "@/components/AchievementCard";
-import { Achievement } from "@/type/Achievement";
+import { Achievement } from "@/type/achievement";
 import styles from "@/app/dashboard/dashboard.module.css"; // 대시보드와 동일한 스타일 모듈 사용 (또는 achievement.module.css)
 
 // API 응답에서 배열을 추출하는 헬퍼 함수
