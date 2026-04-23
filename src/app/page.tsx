@@ -79,8 +79,30 @@ export default function GuestDashboard() {
     <div className={styles.container}>
       {/* 1. 헤더 */}
       <header className={styles.header}>
-        <div className={styles.serviceName}>Together</div>
-        <button className={styles.searchBtn}>🔍 검색</button>
+        {/* 💡 대시보드와 동일하게 로고 이미지와 TwoGetMore 텍스트 적용 (겉 카드 배경 제거) */}
+        <div
+          className={styles.serviceName}
+          style={{
+            background: 'transparent',
+            border: 'none',
+            boxShadow: 'none',
+            padding: 0,
+            display: 'flex',      /* 💡 필수: 가로 정렬 */
+            alignItems: 'center', /* 💡 필수: 로고와 텍스트의 세로 중앙을 맞춤 */
+            height: '70px',       /* 💡 로고 높이와 맞춰서 영역 확보 */
+            lineHeight: '1'       /* 💡 텍스트 자체의 상하 여백 제거 */
+          }}
+        >
+          <Image
+            src="/icon/TwoGetMore_3.png"
+            alt="TwoGetMore 로고"
+            width={70}
+            height={70}
+          />
+          <span style={{ marginLeft: '1px', fontSize: '1.2rem', fontWeight: 'bold', color: 'var(--text-primary)' }}>
+            TwoGetMore
+          </span>
+        </div>
       </header>
 
       {/* 2. 인증 섹션 */}
@@ -147,7 +169,7 @@ export default function GuestDashboard() {
         </div>
       </section>
 
-      
+
       {/* 전역 하단 네비게이션 */}
       <BottomNav />
     </div>
