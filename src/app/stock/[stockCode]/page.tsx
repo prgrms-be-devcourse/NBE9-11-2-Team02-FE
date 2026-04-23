@@ -222,7 +222,7 @@ export default function StockDetailPage() {
                                 className="text-sm"
                                 style={{ color: isPositive ? 'var(--price-up)' : 'var(--price-down)' }}
                             >
-                                ({isPositive ? '+' : ''}{Number(priceInfo?.changeRate ?? 0).toFixed(1)}%)
+                                ({isPositive ? '+' : ''}{Number(priceInfo?.changeRate ?? 0).toFixed(2)}%)
                             </span>
                             <span className="text-xs ml-1" style={{ color: 'var(--text-tertiary)' }}>
                                 전일 대비
