@@ -102,8 +102,7 @@ const [toast, setToast] = useState<string | null>(null);
       showToast(
         `${name} ${quantity.toLocaleString("ko-KR")}주 매도 완료 (${price.toLocaleString("ko-KR")}원)`,
       );
-      // [추가] 매도 성공 후 홈으로 이동 (경로가 '/'가 아니라면 해당 경로로 수정하세요)
-      router.push('/');
+      
 
       setQtyDigits("");
     } catch {
