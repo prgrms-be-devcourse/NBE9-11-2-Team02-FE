@@ -6,6 +6,7 @@ import Link from "next/link";
 import { fetchApi } from "@/lib/client";
 import { SignupReq } from "@/type/user";
 import RegisterSuccessModal from "@/components/RegisterSuccessModal";
+import Image from "next/image"; // 💡 Image 컴포넌트 임포트 추가
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -45,13 +46,42 @@ export default function RegisterPage() {
       {showSuccessModal && (
         <RegisterSuccessModal onConfirm={() => router.push("/login")} />
       )}
+      {/* 1. 로고 영역: 회원가입 텍스트 위로 이동 및 세로 중앙 정렬 */}
+      <div 
+        style={{
+          display: 'flex',
+          flexDirection: 'column', // 이미지와 텍스트를 위아래로 배치
+          alignItems: 'center',    // 가로 중앙 정렬
+          justifyContent: 'center',
+          marginBottom: '1.5rem',  // 아래 '회원가입' 타이틀과의 간격
+        }}
+      >
+        <Image
+          src="/icon/TwoGetMore_3.png"
+          alt="TwoGetMore 로고"
+          width={120}
+          height={120}
+        />
+        <span 
+          style={{ 
+            marginTop: '12px', 
+            fontSize: '1.75rem', 
+            fontWeight: '900', 
+            color: 'var(--text-primary)' 
+          }}
+        >
+          TwoGetMore
+        </span>
+      </div>
+
+      {/* 2. 회원가입 타이틀 */}
       <h1
         style={{
-          fontSize: "1.5rem",
-          fontWeight: 700,
+          fontSize: "1.2rem",
+          fontWeight: 600,
           marginBottom: "2rem",
           textAlign: "center",
-          color: "var(--text-primary)",
+          color: "var(--text-secondary)", // 로고가 돋보이도록 부드러운 색상 적용
         }}
       >
         회원가입

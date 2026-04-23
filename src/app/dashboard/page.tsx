@@ -8,7 +8,7 @@ import { useMyAssets } from "@/hooks/useMyAssets";
 import { fetchApi } from "@/lib/client";
 import styles from "./dashboard.module.css";
 import BottomNav from "@/components/BottomNav"; // 추가
-import { Achievement } from "@/type/Achievement";
+import { Achievement } from "@/type/achievement";
 
 const getLogo = (name: string) => {
   if (name.includes("삼성")) return "/logos/samsung.svg";
@@ -25,6 +25,8 @@ const getLogo = (name: string) => {
   if (name.includes("하나")) return "/logos/hana.svg";
   return "/logos/default.svg";
 };
+
+
 
 
 export default function DashboardPage() {
@@ -51,7 +53,7 @@ export default function DashboardPage() {
     }).catch(console.error);
 
     // 💡 2. 업적 정보 조회 API 호출 추가
-    fetchApi("/api/achievements/me", { headers : { Authorization: `Bearer ${accessToken}` }})
+    fetchApi("/api/achievements/me", { headers: { Authorization: `Bearer ${accessToken}` } })
       .then((res) => {
         const data = res.data || res.result || res;
         const list = Array.isArray(data) ? data : [];
@@ -85,7 +87,29 @@ export default function DashboardPage() {
     <div className={styles.container}>
       {/* 1. 상단 헤더 영역 */}
       <header className={styles.header}>
-        <div className={styles.serviceName}>서비스 네임</div>
+        <div
+          className={styles.serviceName}
+          style={{
+            background: 'transparent',
+            border: 'none',
+            boxShadow: 'none',
+            padding: 0,
+            display: 'flex',      /* 💡 필수: 가로 정렬 */
+            alignItems: 'center', /* 💡 필수: 로고와 텍스트의 세로 중앙을 맞춤 */
+            height: '30px',       /* 💡 로고 높이와 맞춰서 영역 확보 */
+            lineHeight: '1'       /* 💡 텍스트 자체의 상하 여백 제거 */
+          }}
+        >
+          <Image
+            src="/icon/TwoGetMore_3.png"
+            alt="TwoGetMore 로고"
+            width={70}  /* 💡 기존 40에서 70으로 크기 확대 (원하시는 수치로 조절 가능) */
+            height={70} /* 💡 width와 동일한 비율로 확대 */
+          />
+          <span style={{ marginLeft: '1px', fontSize: '1.2rem', fontWeight: 'bold', color: 'var(--text-primary)' }}>
+            TwoGetMore
+          </span>
+        </div>
         <button onClick={onLogout} className={styles.logoutBtn}>
           로그아웃
         </button>
@@ -94,11 +118,11 @@ export default function DashboardPage() {
       {/* 💡 2. 유저 정보 및 배지 영역 렌더링 수정 */}
       <section className={styles.profileCard}>
         <span className={styles.nickname}>{nickname}</span>
-        
+
         {/* 💡 클릭 시 업적 페이지로 이동하도록 onClick 이벤트와 포인터 커서 추가 */}
-        <div 
-          className={styles.badgeGroup} 
-          onClick={() => router.push("/achievement")} 
+        <div
+          className={styles.badgeGroup}
+          onClick={() => router.push("/achievement")}
           style={{ cursor: "pointer" }}
           title="내 업적 보러가기"
         >
@@ -109,9 +133,9 @@ export default function DashboardPage() {
             <>
               {/* 최대 3개까지만 아이콘으로 보여줌 */}
               {achievedBadges.slice(0, 3).map((badge, idx) => (
-                <div 
-                  key={badge.code || idx} 
-                  className={styles.badgeDummy} 
+                <div
+                  key={badge.code || idx}
+                  className={styles.badgeDummy}
                   title={badge.name} // 마우스를 올리면 업적 이름이 보이도록 title 속성 추가
                 >
                   🏆 {/* DB에 이모지가 있다면 badge.icon 등을 활용할 수 있습니다 */}

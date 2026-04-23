@@ -5,6 +5,8 @@ import { useState } from "react";
 import Link from "next/link";
 import { fetchApi } from "@/lib/client";
 import { LoginReq, UsersRes } from "@/type/user";
+import Image from "next/image";
+import styles from "@/app/dashboard/dashboard.module.css"
 
 export default function LoginPage() {
   const router = useRouter();
@@ -36,13 +38,43 @@ export default function LoginPage() {
 
   return (
     <>
+    
+      {/* 1. 로고 영역: 로그인 텍스트 위로 이동 및 세로 중앙 정렬 */}
+      <div 
+        style={{
+          display: 'flex',
+          flexDirection: 'column', // 이미지와 텍스트를 위아래로 배치
+          alignItems: 'center',    // 가로 중앙 정렬
+          justifyContent: 'center',
+          marginBottom: '1.5rem',  // 아래 '로그인' 타이틀과의 간격
+        }}
+      >
+        <Image
+          src="/icon/TwoGetMore_3.png"
+          alt="TwoGetMore 로고"
+          width={120}  /* 💡 기존 70에서 120으로 크기 대폭 확대 */
+          height={120}
+        />
+        <span 
+          style={{ 
+            marginTop: '12px', /* 💡 이미지와 글자 사이 간격 */
+            fontSize: '1.75rem', 
+            fontWeight: '900', 
+            color: 'var(--text-primary)' 
+          }}
+        >
+          TwoGetMore
+        </span>
+      </div>
+
+      {/* 2. 로그인 타이틀 */}
       <h1
         style={{
-          fontSize: "1.5rem",
-          fontWeight: 700,
+          fontSize: "1.2rem",
+          fontWeight: 600,
           marginBottom: "2rem",
           textAlign: "center",
-          color: "var(--text-primary)",
+          color: "var(--text-secondary)", // 로고가 더 돋보이도록 타이틀 색상을 살짝 부드럽게 조정 (필요시 primary로 복구 가능)
         }}
       >
         로그인
