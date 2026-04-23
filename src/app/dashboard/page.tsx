@@ -8,6 +8,7 @@ import { useMyAssets } from "@/hooks/useMyAssets";
 import { fetchApi } from "@/lib/client";
 import styles from "./dashboard.module.css";
 import BottomNav from "@/components/BottomNav"; // 추가
+import { Achievement } from "@/type/Achievement";
 
 const getLogo = (name: string) => {
   if (name.includes("삼성")) return "/logos/samsung.svg";
@@ -35,6 +36,9 @@ export default function DashboardPage() {
   const [deposit, setDeposit] = useState(0);
   const [nickname, setNickname] = useState("사용자");
 
+  // 💡 1. 달성한 업적 목록을 담을 상태 추가
+  const [achievedBadges, setAchievedBadges] = useState<Achievement[]>([]);
+
   useEffect(() => {
     const accessToken = localStorage.getItem("accessToken");
     // 계좌 정보(예수금 등) 조회
@@ -45,6 +49,15 @@ export default function DashboardPage() {
       setDeposit(res.data.deposit || 0);
       setNickname(res.data.nickname || "사용자");
     }).catch(console.error);
+
+    // 💡 2. 업적 정보 조회 API 호출 추가
+    fetchApi("/api/achievements/me", { headers : { Authorization: `Bearer ${accessToken}` }})
+      .then((res) => {
+        const data = res.data || res.result || res;
+        const list = Array.isArray(data) ? data : [];
+        // isAchieved가 true인(달성 완료된) 업적만 필터링해서 상태에 저장
+        setAchievedBadges(list.filter((a: Achievement) => a.isAchieved));
+      }).catch(console.error);
 
     // 유저 프로필 조회 로직 (필요 시 추가)
     //setNickname("진우");
@@ -78,12 +91,40 @@ export default function DashboardPage() {
         </button>
       </header>
 
-      {/* 2. 유저 정보 및 배지 영역 */}
+      {/* 💡 2. 유저 정보 및 배지 영역 렌더링 수정 */}
       <section className={styles.profileCard}>
         <span className={styles.nickname}>{nickname}</span>
-        <div className={styles.badgeGroup}>
-          <div className={styles.badgeDummy}>🏅</div>
-          <div className={styles.badgeDummy}>🛡️</div>
+        
+        {/* 💡 클릭 시 업적 페이지로 이동하도록 onClick 이벤트와 포인터 커서 추가 */}
+        <div 
+          className={styles.badgeGroup} 
+          onClick={() => router.push("/achievement")} 
+          style={{ cursor: "pointer" }}
+          title="내 업적 보러가기"
+        >
+          {achievedBadges.length === 0 ? (
+            // 달성한 업적이 없을 때 보여줄 기본 텍스트나 디자인
+            <span style={{ fontSize: '12px', color: '#888' }}>새싹 투자자 🌱</span>
+          ) : (
+            <>
+              {/* 최대 3개까지만 아이콘으로 보여줌 */}
+              {achievedBadges.slice(0, 3).map((badge, idx) => (
+                <div 
+                  key={badge.code || idx} 
+                  className={styles.badgeDummy} 
+                  title={badge.name} // 마우스를 올리면 업적 이름이 보이도록 title 속성 추가
+                >
+                  🏆 {/* DB에 이모지가 있다면 badge.icon 등을 활용할 수 있습니다 */}
+                </div>
+              ))}
+              {/* 달성한 업적이 3개를 초과하면 나머지 개수를 숫자로 표시 */}
+              {achievedBadges.length > 3 && (
+                <span style={{ fontSize: '12px', color: '#666', marginLeft: '4px', fontWeight: 'bold' }}>
+                  +{achievedBadges.length - 3}
+                </span>
+              )}
+            </>
+          )}
         </div>
       </section>
 
