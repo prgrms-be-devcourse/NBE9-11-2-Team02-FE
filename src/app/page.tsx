@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Image from "next/image"; // 💡 next/image 추가
 import styles from "./guest-dashboard.module.css";
+import BottomNav from "@/components/BottomNav"; // 추가
 
 // 💡 로고 반환 유틸리티 함수 추가
 const getLogo = (name: string) => {
@@ -27,7 +28,25 @@ export default function GuestDashboard() {
   const router = useRouter();
   const [topStocks, setTopStocks] = useState<any[]>([]);
 
+  // 💡 1. 인증 상태 확인 전까지 빈 화면을 유지하기 위한 상태 추가
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+
+  // 💡 2. 마운트 직후 로컬 스토리지 검사 로직 추가
   useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+    if (token) {
+      // 토큰이 있으면 뒤로가기 방지를 위해 replace로 대시보드 이동
+      router.replace("/dashboard");
+    } else {
+      // 토큰이 없으면 로딩을 끝내고 게스트 화면 노출
+      setIsCheckingAuth(false);
+    }
+  }, [router]);
+
+  // 인증 확인 이후에만 SSE 연결 (훅은 항상 같은 순서로 호출되어야 하므로 early return 위에 둠)
+  useEffect(() => {
+    if (isCheckingAuth) return;
+
     const sseUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080"}/api/stocks/sse`;
     const eventSource = new EventSource(sseUrl);
 
@@ -49,7 +68,12 @@ export default function GuestDashboard() {
     return () => {
       eventSource.close();
     };
-  }, []);
+  }, [isCheckingAuth]);
+
+  // 💡 3. 인증 검사 중일 때는 화면 깜빡임(FOUC) 방지를 위해 렌더링을 지연시킴
+  if (isCheckingAuth) {
+    return <div className={styles.container} style={{ minHeight: '100vh' }} />; // 빈 화면 또는 스피너
+  }
 
   return (
     <div className={styles.container}>
@@ -123,12 +147,9 @@ export default function GuestDashboard() {
         </div>
       </section>
 
-      {/* 4. 하단 네비게이션 */}
-      <nav className={styles.bottomNav}>
-        <div className={styles.navActive}>main</div>
-        <div onClick={() => router.push("/stocks")}>전체종목</div>
-        <div onClick={() => router.push("/ranking")}>순위</div>
-      </nav>
+      
+      {/* 전역 하단 네비게이션 */}
+      <BottomNav />
     </div>
   );
 }
